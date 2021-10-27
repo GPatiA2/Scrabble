@@ -1,0 +1,186 @@
+{
+    "mazo": [
+        {
+            "letra": "A",
+            "data": {
+                "puntos": 1,
+                "frecuencia": 12
+            }
+        },
+        {
+            "letra": "B",
+            "data": {
+                "puntos": 3,
+                "frecuencia": 2
+            }
+        },
+        {
+            "letra": "C",
+            "data": {
+                "puntos": 3,
+                "frecuencia": 4
+            }
+        },
+        {
+            "letra": "D",
+            "data": {
+                "puntos": 2,
+                "frecuencia": 5
+            }
+        },
+        {
+            "letra": "E",
+            "data": {
+                "puntos": 1,
+                "frecuencia": 12
+            }
+        },
+        {
+            "letra": "F",
+            "data": {
+                "puntos": 4,
+                "frecuencia": 1
+            }
+        },
+        {
+            "letra": "G",
+            "data": {
+                "puntos": 2,
+                "frecuencia": 2
+            }
+        },
+        {
+            "letra": "H",
+            "data": {
+                "puntos": 4,
+                "frecuencia": 2
+            }
+        },
+        {
+            "letra": "I",
+            "data": {
+                "puntos": 1,
+                "frecuencia": 6
+            }
+        },
+        {
+            "letra": "J",
+            "data": {
+                "puntos": 8,
+                "frecuencia": 1
+            }
+        },
+        {
+            "letra": "L",
+            "data": {
+                "puntos": 1,
+                "frecuencia": 4
+            }
+        },
+        {
+            "letra": "M",
+            "data": {
+                "puntos": 3,
+                "frecuencia": 2
+            }
+        },
+        {
+            "letra": "N",
+            "data": {
+                "puntos": 1,
+                "frecuencia": 5
+            }
+        },
+        {
+            "letra": "Ñ",
+            "data": {
+                "puntos": 8,
+                "frecuencia": 1
+            }
+        },
+        {
+            "letra": "O",
+            "data": {
+                "puntos": 1,
+                "frecuencia": 9
+            }
+        },
+        {
+            "letra": "P",
+            "data": {
+                "puntos": 3,
+                "frecuencia": 2
+            }
+        },
+        {
+            "letra": "Q",
+            "data": {
+                "puntos": 5,
+                "frecuencia": 1
+            }
+        },
+        {
+            "letra": "R",
+            "data": {
+                "puntos": 1,
+                "frecuencia": 5
+            }
+        },
+        {
+            "letra": "S",
+            "data": {
+                "puntos": 1,
+                "frecuencia": 6
+            }
+        },
+        {
+            "letra": "T",
+            "data": {
+                "puntos": 1,
+                "frecuencia": 4
+            }
+        },
+        {
+            "letra": "U",
+            "data": {
+                "puntos": 1,
+                "frecuencia": 5
+            }
+        },
+        {
+            "letra": "V",
+            "data": {
+                "puntos": 4,
+                "frecuencia": 1
+            }
+        },
+        {
+            "letra": "X",
+            "data": {
+                "puntos": 8,
+                "frecuencia": 1
+            }
+        },
+        {
+            "letra": "Y",
+            "data": {
+                "puntos": 4,
+                "frecuencia": 1
+            }
+        },
+        {
+            "letra": "Z",
+            "data": {
+                "puntos": 10,
+                "frecuencia": 1
+            }
+        },
+        {
+            "letra": "*",
+            "data": {
+                "puntos": 0,
+                "frecuencia": 2
+            }
+        }
+    ]
+}
