@@ -1,0 +1,29 @@
+-- Local Games:
+	1. Run Main.
+	2. Choose 'Partida Local'.
+	3. Input players (press enter for each player inputed).
+	4. Choose difficulty of machine-controlled players.
+	5. Choose the number of machine-controlled players.
+
+-- Online Games:
+
+  -- Hosting:
+  
+	1. Run Main
+	2. Choose 'Alojar partida en red' -> a server and a client are created.
+	3. Input nickname.
+	4. The first client to join a lobby (the one hosting) chooses the number of players in the game and the difficulty of the machine-controlled players.
+	** If the number of players selected is not completely filled with human players, machine-controlled players will join the game until the amount of players is matches. 
+  5. When everything is ready, press "Empezar Partida".
+
+  -- Joining:
+  
+  1. Run Main
+  2. Choose 'Unirse a partida en red' -> a client is created
+  3. Input the host´s IP
+  4. Input nickname
+  5. Wait for your host to start the game
+
+-- Load Game
+	1. Run Main
+	2. Choose load game and select the file containing the game to load
