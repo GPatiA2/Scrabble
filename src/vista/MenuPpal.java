@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,9 +132,10 @@ public class MenuPpal extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				String ip = JOptionPane.showInputDialog("Introduce la IP del servidor");
 				new Thread() {
 					public void run() {
-						new Cliente("localhost", 5000);
+						new Cliente(ip, 5000);
 					}
 				}.start();
 				dispose();
