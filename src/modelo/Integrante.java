@@ -3,19 +3,11 @@ package modelo;
 
 import java.util.ArrayList;
 
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import Command.Command;
-import Command.CommandGenerator;
 import Excepciones.CommandExecuteException;
-import Excepciones.CommandParseException;
-import javafx.util.Pair;
 import utils.Coordenadas;
 
 /**
@@ -27,7 +19,7 @@ import utils.Coordenadas;
  * @author Grupo 5
  *
  */
-public class Integrante implements Originator, Observable<JugadorObserver>{
+public abstract class Integrante implements Originator, Observable<JugadorObserver>{
 	/**
 	 * Cada X puntos damos una cantidad Y de monedas
 	 */
@@ -60,21 +52,9 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 	 */
 	protected int monedas_gastadas;
 	/**
-	 * Estrategia que sigue el integrante dependiendo de si es un
-	 * jugador humano (PlayerStrategy) o una maquina(MaquinaStrategy)
-	 *@see src/Modelo/RunStrategy
-	 *@see src/Modelo/PlayerStrategy
-	 *@see src/Modelo/Maquina
-	 */
-	protected RunStrategy estrategia;
-	/**
-	 * Indica el numero de turnos seguidos que ha pasado el jugador
-	 */
-	private int turnosPasados;
-	/**
 	 * Indica si el integrante puede jugar
 	 */
-	private boolean puedeJugar;
+	protected boolean puedeJugar;
 	/**
 	 * Indica si el integrante ha comprado la ventaja Invertir sentido en 
 	 * los turnos. Este atributo es necesario para que el AdminTurnos pueda
@@ -82,7 +62,7 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 	 * @see src/Command/ComandoInvertirSentido
 	 * @see src/Modelo/AdminTurnos
 	 */
-	private boolean invertirSentido;
+	protected boolean invertirSentido;
 	/**
 	 * Indica si el integrante ha comprado la ventaja Saltar un jugador en 
 	 * los turnos. Este atributo es necesario para que el AdminTurnos pueda
@@ -92,7 +72,7 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 	 */
 	private boolean saltarJugador;
 	/**
-	 * Atril del integrande
+	 * Atril del integrante
 	 */
 	protected List<Ficha> mano;
 	/**
@@ -111,13 +91,6 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 		observers = new ArrayList<JugadorObserver>();
 	}
 	
-	public void robar(Ficha f) {
-		mano.add(f);
-		letras.add(f.getLetra());
-	}
-	
-	public int size() {
-		return mano.size();
 
 	/**
 	 * Antes de colocar una ficha en el tablero se comprueba que dicha ficha existe
@@ -133,17 +106,11 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 	public Ficha ExisteFicha(String ficha, boolean bienColocada) throws IllegalArgumentException{
 		for(Ficha f : mano) {
 			if(f.igual_id(ficha)) {
-				if (bienColocada) {  //Si esta en una casilla disponible se elimina de la mano y se notifica
-					mano.remove(f);
-					for(JugadorObserver j : this.observers) {
-						j.borrarFichaMano(f, this, bienColocada);
-					}
-				}
-				else { //Si no esta bien colocada notifico a los observadores para que la ficha vuelva a aparecer en el atril
-					for(JugadorObserver ob: observers) {
-						ob.fichaRobada(f, this);
-					}
-				}
+					if (bienColocada)  //Si esta en una casilla disponible se elimina de la mano y se notifica
+						mano.remove(f);
+						for(JugadorObserver j : this.observers) {
+							j.borrarFichaMano(f, this, bienColocada);
+						}
 				
 				return f;
 			}
@@ -168,8 +135,9 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 		return null;
 	}
 	
+	
 	/**
-	 * Aï¿½ade una ficha robada del mazo al atril del jugador
+	 * Añade una ficha robada del mazo al atril del jugador
 	 * @param f
 	 */
 	public void robar(Ficha f) {
@@ -180,35 +148,7 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 	}
 	
 	/**
-	 * Aï¿½ade una ficha al atril del integrante
-	 * @param f
-	 */
-	public void anadirFicha(Ficha f) {
-		//TODO: revisar, cuando se utiliza esto?? se supone que al robar una ficha se usa la funcion robar()
-		mano.add(f);
-	}
-	
-	
-	/**
-	 * Elimina una ficha dada del atril del integrante
-	 * @param f : ficha 
-	 * @throws Exception si el integrante no tiene la ficha en su atril
-	 */
-	public void poner(Ficha f) throws Exception{ 
-		//TODO: en que momento se usa esto?
-		if (mano.contains(f)) {
-			mano.remove(f);
-			for(JugadorObserver ob: observers) {
-				ob.fichaUsada(f, this);
-			}
-		}
-		else {
-			throw new Exception("No tienes la ficha indicada");
-		}
-	}
-	
-	/**
-	 * Aï¿½ade los puntos recibidos a la puntuacion del Integrante
+	 * Añade los puntos recibidos a la puntuacion del Integrante
 	 * @param p
 	 */
 	public void recibirPuntos(int p) {
@@ -232,6 +172,10 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 			throw new CommandExecuteException("No tienes suficientes monedas");
 		}
 		this.monedas_gastadas += m;
+
+		for(JugadorObserver ob: observers) {			
+			ob.mostrarMonedas(this.monedas_ganadas - this.monedas_gastadas, nick);
+		}
 	}
 	
 	/**
@@ -241,21 +185,10 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 	public void actualizarGanadas() {
 		this.monedas_ganadas = YmonedasCadaXPuntos * (this.puntos/cadaXPuntos);
 		for(JugadorObserver ob: observers) {			
-			ob.mostrarMonedas(getCoin(), nick);
+			ob.mostrarMonedas(this.monedas_ganadas, nick);
 		}
 	}
 
-	/**
-	 * El integrante recibe las monedas dadas por parametros y notifica
-	 * a los observadores
-	 * @param monedas
-	 */
-	public void recibirMonedas(int monedas) {
-		this.monedas_gastadas = monedas;
-		for(JugadorObserver ob: observers) {			
-			ob.mostrarMonedas(getCoin(), nick);
-		}
-	}
 
 	/**
 	 * Elimina una ficha dada del atril del integrante
@@ -264,7 +197,6 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 	 * @throws CommandExecuteException en caso de no existir en el atril la ficha que se quiere eliminar
 	 */
 	public Ficha eliminarFicha(char ficha) throws CommandExecuteException{
-		//TODO: revisar, en que momento se usa eso??? para eliminar una ficha se usa el metodo borrarFichaMano()
 		boolean encontrado = false;
 		int i = 0;
 		while (!encontrado && i < mano.size()) {
@@ -272,7 +204,9 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 				encontrado = true;
 				Ficha f = mano.get(i);
 				mano.remove(i);
-				letras.remove(f.getLetra());
+				for(JugadorObserver j : this.observers) {
+					j.borrarFichaMano(f, this, true);
+				}
 				return f;
 			}
 			i++;
@@ -281,29 +215,11 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 		throw new CommandExecuteException("No tienes la ficha que quieres descartar");
 		
 	}
-
-	public void anadirFicha(Ficha f) {
-		mano.add(f);
-	}
 	
-	public Ficha get_ficha_posicion(int indice) {
-		return mano.get(indice);
-	}
-	/**
-	 * Metodo utilizado por la maquina para coger una letra y colocarla en el tablero
-	 * @param letra
-	 * @return
-	 */
-	public Ficha get_ficha_letra(char letra) {
-		//TODO: revisar, otra vez lo mismo, se supone que se elimina con el metodo borrarFichaMano
-		for (Ficha f : this.mano) {
-			if (f.getLetra() == letra) {
-				mano.remove(f); //Se elimina la ficha de la mano
-				return f;
-			}
-		}
-		return null;
-	}
+	protected abstract void convertirMonedasPuntos();
+
+	
+	//Metodos utilizados en algunos test
 	
 	/**
 	 * Devuelve la ficha del atril que esta en la posicion dada por parametros
@@ -323,71 +239,21 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 	}
 	
 	//--------------------METODOS DE LA INTERFAZ ORIGINATOR------------------------
-
-
-	@Override
-	public void setMemento(Memento m) {
-		nick = m.getState().getString("nick");
-		monedas_gastadas = m.getState().getInt("monedas gastadas");
-		monedas_ganadas = m.getState().getInt("monedas ganadas");
-		puntos = m.getState().getInt("puntos");
-		puedeJugar = m.getState().getBoolean("puedeJugar");
-		invertirSentido = m.getState().getBoolean("invertirSentido");
-		
-		JSONArray jsonArrayMano = m.getState().getJSONArray("mano");
-		mano.clear(); //Limpiar mano en caso de que contuviera fichas
-		
-		for(int i = 0; i < jsonArrayMano.length(); ++i) {
-			Memento mementoFicha = new Memento();
-			
-			mementoFicha.setState(jsonArrayMano.getJSONObject(i));
-			Ficha f = new Ficha();
-			f.setMemento(mementoFicha); //Establecer estado de la ficha
-			mano.add(i, f); //Annadir ficha a la mano del jugador
-		}
-		
-	}
-
-	@Override
-	public Memento createMemento() {
-		Memento memento = new Memento();
-		JSONObject jsonJugador = new JSONObject();
-		JSONArray jsonArrayMano = new JSONArray();
-		
-		jsonJugador.put("nick", this.nick);
-		jsonJugador.put("puntos", this.puntos);
-		jsonJugador.put("monedas ganadas", this.monedas_ganadas);
-		jsonJugador.put("monedas gastadas", this.monedas_gastadas);
-		jsonJugador.put("puedeJugar", this.puedeJugar);
-		jsonJugador.put("invertirSentido", this.invertirSentido);
-		
-		for(Ficha f : this.mano) {
-			JSONObject jsonFicha = new JSONObject();
-			jsonFicha = f.createMemento().getState();
-			jsonArrayMano.put(jsonFicha);
-		}
-		
-		jsonJugador.put("mano", jsonArrayMano);
-		
-		memento.setState(jsonJugador);
-		
-		return memento;
-	}
-
+	
+	public abstract Memento createMemento();
+	public abstract void setMemento(Memento m);
 
 
 	//--------------------METODOS DE LA INTERFAZ OBSERVABLE------------------------
 
 	@Override
 	public void addObserver(JugadorObserver o) {
-		// TODO Auto-generated method stub
 		observers.add(o);
 		o.onRegister(nick, puntos, monedas_ganadas, mano);
 	}
 
 	@Override
 	public void removeObserver(JugadorObserver o) {
-		// TODO Auto-generated method stub
 		observers.remove(o);
 	}
 	
@@ -406,25 +272,10 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 	}
 	
 	public int getCoin() {
-		return this.monedas_ganadas;
+		return this.monedas_ganadas - this.monedas_gastadas;
 	}
 	
-	public int getGastadas() {
-		return this.monedas_gastadas;
-	}
 	
-	/**
-	 * Devuelve la estrategia del jugador
-	 * @return RunStrategy
-	 */
-	public RunStrategy get_estrategia() {
-		return this.estrategia;
-	}
-	
-	public String getNivel() {
-		return null;
-	}
-
 	/**
 	 * Devuelve una copia no modificable del atril
 	 * @return
@@ -432,11 +283,9 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 	public List<Ficha> get_mano() {
 		return Collections.unmodifiableList(mano);
 	}
-
-	public void borrarMonedas() {
-		this.monedas_gastadas = this.monedas_ganadas;
+	public int getNumFichasMano() {
+		return this.mano.size();
 	}
-
 	public void setGame(Game game) {
 	}
 
@@ -447,8 +296,33 @@ public class Integrante implements Originator, Observable<JugadorObserver>{
 		return null;
 	}
 
-	public List<Command> realizarJugada(Game game, AdminTurnos tManager, Turno t, Scanner in, List<Coordenadas> listaFichasNoFijas){
-		return null;
+	public void juegaTurno(Turno turno, AdminTurnos admin, List<Coordenadas> listaFichasNoFijas) {
+		puedeJugar = true;
 	}
+	
+	public  void acabaTurno() {
+		puedeJugar = false;
+	}
+	
+	public  boolean puedeActuar() {
+		return puedeJugar;
+	}
+	
+	public boolean InvertirSentido() {
+		return invertirSentido;
+	}
+
+	public void setInvertirSentido(boolean invertirSentido) {
+		this.invertirSentido = invertirSentido;
+	}
+
+	public boolean SaltarJugador() {
+		return saltarJugador;
+	}
+
+	public void setSaltarJugador(boolean saltarJugador) {
+		this.saltarJugador = saltarJugador;
+	}
+	
 }
 

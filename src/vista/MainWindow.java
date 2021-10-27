@@ -1,10 +1,8 @@
 package vista;
 
-import java.awt.BorderLayout;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -12,7 +10,7 @@ import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import javax.swing.BoxLayout;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -21,39 +19,64 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Cliente.EstadoCliente;
-import Cliente.TraductorCliente;
 import Command.ComandoSalida;
 import Excepciones.CommandExecuteException;
-import Servidor.ProtocoloComunicacion;
+
 import controlador.Controller;
-import controlador.Registrador;
+import controlador.ControllerLobby;
 import modelo.Ficha;
 import utils.Coordenadas;
 
 public class MainWindow extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	
 	public static final int ALTURA= 850;
 	public static final int ANCHO = 810;
 	
 	public static final float [] colorBordeTablero = Color.RGBtoHSB(29, 118, 27, null); 
 	public static final float [] colorBorder = Color.RGBtoHSB(212, 212, 212, null); 
 	
-	private Registrador c;
+	private Controller c;
 	
 	private JPanel currentPanel;	
 	
 	private static GamePanel gm;
 	private LoginPanel loginpanel;
-	private StartPanel startPanel;
 	private LobbyPanel lp;
 	
 	
-	public MainWindow(Registrador c) {
+	public MainWindow(Controller c) {
 		super("SCRUMBBLE");
 			this.c = c;
+			JMenuBar menuBarra = new JMenuBar();
+			this.setJMenuBar(menuBarra);
+			
+			JMenu file = new JMenu ("Opciones"); // Opcion principal
+			menuBarra.add(file);
+												//Subopciones
+			JMenuItem info = new JMenuItem ("Instrucciones");
+			file.add(info);
+			JMenuItem Command = new JMenuItem ("Comandos");
+			file.add(Command);
+			//
+			
+			class instruccion implements ActionListener {
+				public void actionPerformed(ActionEvent e) {
+						new Info_juego ("");
+				}
+			}
+			
+			class comando implements ActionListener {
+				public void actionPerformed(ActionEvent e) {
+						 new Comandos ("");
+				}
+			}
 		
+			info.addActionListener(new instruccion());
+			Command.addActionListener(new comando());
+			
 			this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			this.startPanel = new StartPanel(this);
-			this.currentPanel = startPanel;
 			this.setSize(ANCHO, ALTURA);
 			this.setMinimumSize(new Dimension(ANCHO, ALTURA));
 			this.setLocationRelativeTo(null);
@@ -77,26 +100,20 @@ public class MainWindow extends JFrame {
 					}
 				}
 			});
-			
-			this.cambiarDePanel(startPanel);
-
-		
+			this.currentPanel = new JPanel();	
 	}
 	
 	
 	public void setVista(EstadoCliente userProfile) {
 		switch (userProfile) {
-		case START:
-			startPanel = new StartPanel(this);
-			cambiarDePanel(startPanel);
-			break;
-			
 		case LOGIN:
-			loginpanel = new LoginPanel(this);
+			loginpanel = new LoginPanel((ControllerLobby<String>)this.c,this);
 			cambiarDePanel(loginpanel);
 			break;
 		case LOBBY:
-			this.lp = new LobbyPanel(this);
+			ControllerLobby<String> c = (ControllerLobby<String>)this.c;
+			c.removeLobbyObserver(loginpanel);
+			this.lp = new LobbyPanel(c,this);
 			cambiarDePanel(lp);
 			break;
 		case GAME:
@@ -118,15 +135,12 @@ public class MainWindow extends JFrame {
 		repaint();
 	}	
 		
-	public void mostrarLista(String jugadoreslista) {
-		this.lp.mostrarLista(jugadoreslista);
-	}
 	
 	public void mostrar(String message) {
 		JOptionPane.showMessageDialog(this, message);
 	}
 	
-	public void PedirNumJugadores() {
+	public int PedirNumJugadores() {
 		Object[] possibilities = {1,2,3,4,5,6,7,8};
 		Integer n;
 		do {
@@ -137,10 +151,10 @@ public class MainWindow extends JFrame {
 		 possibilities,1);
 		}while(n==null);
 		
-		TraductorCliente.getTraductor().NumJugadores(n);
+		return n;
 	}
 	
-	public void PedirDificultadMaquinas() {
+	public String PedirDificultadMaquinas() {
 		Object[] niveles = {"EASY" , "MEDIUM" , "HARD"};
 		String n;
 		do {
@@ -150,7 +164,7 @@ public class MainWindow extends JFrame {
 			 null, 
 			 niveles,1);
 		}while(n==null);
-		TraductorCliente.getTraductor().dificultadMaquinas(n);
+		return n;
 	}
 
 	public static Coordenadas getCoordenadas(int x, int y) {

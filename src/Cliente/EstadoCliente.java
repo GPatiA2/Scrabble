@@ -7,5 +7,5 @@ package Cliente;
  *	GAME -> El jugador está en una partida
  */
 public enum EstadoCliente {
-	START, LOGIN, LOBBY,GAME;
+	LOGIN, LOBBY,GAME;
 }

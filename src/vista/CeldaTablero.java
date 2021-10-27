@@ -17,23 +17,23 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.border.Border;
 
-import Cliente.TraductorCliente;
 import Command.ComandoQuitarFicha;
 import Command.Command;
 import Excepciones.CommandExecuteException;
-import controlador.Registrador;
+import controlador.Controller;
 import modelo.Casilla;
-import modelo.Ficha;
 import utils.Coordenadas;
 
 public class CeldaTablero extends JButton {
 
+	private static final long serialVersionUID = 1L;
+	
 	private boolean empty;
 	private boolean disponible;
 	private Coordenadas coord;
-	private Registrador res;
+	private Controller res;
 	
-	public CeldaTablero(Registrador res, Casilla c, Coordenadas coord) {
+	public CeldaTablero(Controller res, Casilla c, Coordenadas coord) {
 		super();
 		this.res = res;
 		empty = c.empty();
@@ -85,16 +85,16 @@ public class CeldaTablero extends JButton {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					
-					Command c = new ComandoQuitarFicha(coord.getFila()+1, coord.getColumna()+1);
-					try {
-						res.runCommand(c);
-					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();
-					} catch (CommandExecuteException e1) {
-						e1.printStackTrace();
+					if(GamePanel.getEnable()) {
+						Command c = new ComandoQuitarFicha(coord.getFila()+1, coord.getColumna()+1);
+						try {
+							res.runCommand(c);
+						} catch (FileNotFoundException e1) {
+							e1.printStackTrace();
+						} catch (CommandExecuteException e1) {
+							e1.printStackTrace();
+						}
 					}
-					
 				}
 				
 			});
@@ -113,7 +113,7 @@ public class CeldaTablero extends JButton {
 		//Leo el fondo y loy metiendo en un BufferedImage
 		try {
 			final BufferedImage image = ImageIO.read(new File("Dibujos/letra.png"));
-			System.out.println(info);
+//			System.out.println(info);
 			
 			//'pinto' la imagen
 			Graphics g = image.getGraphics();

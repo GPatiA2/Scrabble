@@ -4,10 +4,7 @@ package Command;
 import Excepciones.CommandExecuteException;
 import Excepciones.CommandParseException;
 import Servidor.ProtocoloComunicacion;
-import javafx.util.Pair;
 import modelo.Ficha;
-import modelo.Game;
-import modelo.TableroObserver;
 import modelo.Integrante;
 import modelo.Mazo;
 import modelo.Tablero;
@@ -25,16 +22,12 @@ import utils.Coordenadas;
  */
 public class ComandoQuitarFicha extends Command{
 	/**
-	 * Informacion de ayuda sobre el comando quitar una ficha
-	 */
-	private static final String help = "Este comando permite quitar una ficha del tablero.";
-	/**
 	 * Coordenadas de la ficha a quitar
 	 */
 	private Coordenadas coor;
 	
 	public ComandoQuitarFicha(int coorX, int coorY) {
-		super("quitar",ProtocoloComunicacion.QUITAR_FICHA_TABLERO, "q", "quitar <coorX><coorY>", help);
+		super("quitar",ProtocoloComunicacion.QUITAR_FICHA_TABLERO, "q");
 		coor = new Coordenadas(coorX,coorY);
 	}
 

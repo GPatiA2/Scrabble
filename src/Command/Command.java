@@ -26,8 +26,6 @@ public abstract class Command {
 	protected final String nombreProtocolo;
 	protected final String nombre;
 	protected final String shortcut;
-	private   final String detalles;
-	private   final String help;
 	
 	/**
 	 * Constructor de Command
@@ -37,12 +35,10 @@ public abstract class Command {
 	 * @param detalles
 	 * @param help
 	 */
-	public Command(String nombre, String nombreProtocolo,String shortcut, String detalles, String help ) {
+	public Command(String nombre, String nombreProtocolo,String shortcut) {
 		this.nombre = nombre;
 		this.nombreProtocolo = nombreProtocolo;
 		this.shortcut = shortcut;
-		this.detalles = detalles;
-		this.help = help;
 	}
 	
 	/**
@@ -135,10 +131,6 @@ public abstract class Command {
 	public Command parse(String[] comandoCompleto) throws CommandParseException{
 		Command command = CommandGenerator.parseCommand(comandoCompleto);
 		return command;
-	}
-	
-	public String Ayuda() {
-		return nombre + "(" + shortcut + ") : " + detalles + System.lineSeparator() + "\t" + help;
 	}
 	
 	@Override

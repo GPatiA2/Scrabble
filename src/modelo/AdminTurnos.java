@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import Command.Command;
 import Excepciones.CommandExecuteException;
+import utils.Coordenadas;
 
 /**
  * Clase AdminTurnos
@@ -32,7 +33,7 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 	 */
 	private List<Integrante> jugadores;
 	/**
-	 * Objeto que encapsula la l�gica que refiere a las reglas del juego
+	 * Objeto que encapsula la logica que refiere a las reglas del juego
 	 * @see Game
 	 */
 	private Game game;
@@ -48,14 +49,6 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 	 * @see Mazo
 	 */
 	private Mazo mazo;
-	
-	/**
-	 * Coleccion de palabras validas en el juego
-	 * @see ScoreWord
-	 * @see Diccionario
-	 */
-	private Diccionario diccionario;
-	
 	/**
 	 * Integrante de la partida que tiene el turno actual
 	 * @see Turno
@@ -102,10 +95,9 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 	
 	/**
 	 * Constructor de la clase
-	 * @param g	Clase que se encarga de manejar el traspaso de fichas entre el mazo, el tablero, y el jugador en activo
 	 * @param lJugadores Lista de los jugadores que participan en la partida
-	 * @param in Via de entrada para los comandos
 	 * @param g_m Clase encargada de generar el mazo
+	 * 
 	 * @throws IOException 
 	 * 
 	 * @see Integrante
@@ -113,22 +105,27 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 	 * @see GeneradorMazo
 	 * @see GeneradorDiccionario
 	 */
-	public AdminTurnos(GeneradorMazo g_m , GeneradorDiccionario g_d, List<Integrante> lJugadores) throws IOException {
+	public AdminTurnos(GeneradorMazo g_m , List<Integrante> lJugadores) throws IOException {
 		//Se inicializan los parametros del administrador
-		game = new Game(mazo, g_d);
+		game = new Game(mazo);
 		jugadores = lJugadores;
 		tablero = new Tablero();
 		mazo = g_m.generate();
-		diccionario = g_d.generate();
 		actTurn = firstTurn();
 		jugando = jugadores.get(actTurn);
 		orden = true;
-		turnoAct = new Turno(jugando);
 		pasados = 0;
 		observers = new ArrayList<TManagerObserver>();
-		
 		rellenarManos();
+		turnoAct = new Turno(jugando);
 		
+		//Le pasamos la info que le faltaba a las maquinas
+		for (Integrante i : lJugadores) {
+			i.setGame(game);
+			i.setTablero(tablero);
+		}
+		
+		jugando.juegaTurno(turnoAct, this, new ArrayList<>());
 	}
 	
 	/**
@@ -175,13 +172,13 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 		//Se obtiene el jugador al que le toca
 		jugando = jugadores.get(actTurn);
 		for(TManagerObserver ob : observers) {
-			ob.turnoAcabado();
+			ob.turnoAcabado(this.jugadores.get(actTurn).getNick());
 		}
 		
 		//Se crea un turno para ese jugador
 		this.turnoAct = new Turno(jugando);
-		
 		updateObservers();
+		jugando.juegaTurno(turnoAct, this, new ArrayList<Coordenadas>());
 					
 	}
 	
@@ -202,7 +199,7 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 		saltando = jugando.SaltarJugador();
 		jugando.setSaltarJugador(false);
 		
-		
+		System.out.println("Calculando siguiente turno");
 		
 		int aux;
 		if (orden) {
@@ -217,7 +214,6 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 				aux++;
 			}
 		}
-		System.out.println("LE TOCA A " + actTurn);
 		
 		//Si el orden es normal (false) y he llegado al final de la lista de jugadores, paso al principio
 		if(!orden && aux >= jugadores.size()) {
@@ -250,56 +246,6 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 		return pasados == jugadores.size()*2;
 	}
 	
-	/**
-	 * Metodo que convierte la informacion de esta clase en un string para mostrarla
-	 */
-	public String toString() {
-		//esta funcion sirve para mostrar por pantalla los turnos, funciona de la siguiente forma:
-		//cont es un contador que se inicializa al numero de jugadores de la partida, con cada bucle
-		//se decrementa en 1, i es la variable del bucle y se inicializa a actTurn
-		String s = "Turnos: ";
-		int i = this.actTurn;
-		
-		System.out.println(this.actTurn);
-		// Se muestra por pantalla los nicks de  los jugadores y su puntuacion.
-		for (Integrante jug: jugadores) {
-			//System.out.println(jug); // Esto mostraria toda la informacion de los jugadores: nick, mano y puntuacion.
-			System.out.println(jug.getNick() + " --> " + jug.getScore() + " puntos.");
-			System.out.println();
-		}
-		
-		//Muestra el orden de turnos
-		
-		
-		if(!orden && i == this.jugadores.size()) { //orden normal
-			i = (i  % this.jugadores.size()); 
-		}			
-		else if (orden && i == -1) { //orden invertido
-			i = this.jugadores.size() - 1;
-		}
-		
-		String jugadorAct = this.jugadores.get(i).nick;
-		
-		if(!orden) {
-			i++;
-		}
-		else {
-			i--;
-		}
-		
-		if(!orden && i == this.jugadores.size()) { //si i = jugadores.size pero cont > 0 tengo que dar la vuelta a la lista
-			i = (i  % this.jugadores.size()); 
-		}			
-		else if (orden && i == -1) {
-			i = this.jugadores.size() - 1;
-		}
-		
-		String jugadorSig = this.jugadores.get(i).nick;
-		
-		s = s + jugadorAct + " --> " + jugadorSig;
-		
-		return s;
-	}
 	//--------------------METODOS DE LA INTERFAZ ORIGINATOR------------------------
 
 		@Override
@@ -328,7 +274,7 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 		
 		// - - - Memento de Jugador - - -	
 		Memento mementoJugador = new Memento();
-		mementoJugador.setState(m.getState().getJSONObject("Jugador"));
+		mementoJugador.setState(m.getState().getJSONObject("Jugador Actual"));
 		jugando.setMemento(mementoJugador); //Cargar datos de Jugador
 				
 		//- - - Memento de AdminTurno - - -
@@ -345,12 +291,24 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 		JSONArray jsonArrayJugadores = mementoAdminTurnos.getState().getJSONArray("lista jugadores");
 		for(int i = 0; i < jsonArrayJugadores.length(); i++) {
 			Memento mementoJugadores = new Memento();
-			
 			mementoJugadores.setState(jsonArrayJugadores.getJSONObject(i));
-			Jugador j = new Jugador();
-			j.setMemento(mementoJugadores); //Establecer estado del jugador
-			jugadores.add(i, j); //Annadir jugador a la lista
+			
+			if(jsonArrayJugadores.getJSONObject(i).get("tipo").equals("jugador")) {
+				Jugador j = new Jugador();
+				j.setMemento(mementoJugadores); //Establecer estado del jugador				
+				jugadores.add(i, j); //Annadir jugador a la lista
+			}
+			else {
+				Maquina mq = new Maquina();
+				mq.setMemento(mementoJugadores);
+				jugadores.add(i, mq);
+			}
 		}
+		
+		jugando = jugadores.get(actTurn);
+		turnoAct = new Turno(jugando);
+		jugando.juegaTurno(turnoAct, this, new ArrayList<>());
+		
 	}
 	
 	@Override
@@ -382,7 +340,7 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 		jsonModelo.put("Tablero", this.tablero.createMemento().getState());
 		jsonModelo.put("Turno", this.turnoAct.createMemento().getState());
 		jsonModelo.put("Mazo", this.mazo.createMemento().getState());
-		jsonModelo.put("Jugador", this.jugando.createMemento().getState());
+		jsonModelo.put("Jugador Actual", this.jugando.createMemento().getState());
 		jsonModelo.put("AdminTurnos", jsonAdminTurnos);
 		
 		//- - - - - - - - - - - - - - - - - -
@@ -398,7 +356,6 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 	public void addObserver(TManagerObserver o) {
 		// TODO Auto-generated method stub
 		observers.add(o);
-		System.out.println("EL INDICE ES " + getSigTurno(actTurn));
 		
 		o.onRegister(jugando.getNick(), jugadores.get(getSigTurno(actTurn)).getNick());
 	}
@@ -412,23 +369,37 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 		try {
 			
 			//Se ejecuta el comando
+			System.out.println("Esta jugando " + jugando.getNick() + " ejecutando " + c.getClass());
 			c.perform(tablero, mazo, jugando, turnoAct);
-			System.out.println(turnoAct.acabado());
 			//Si el turno se ha acabado
 			if(turnoAct.acabado()) {
-				System.out.println("Turno acabado");
 				//Se comprueba si las palabras son validas
 				boolean correcto = game.Verificar(turnoAct.getlistaFichasNoFijas(), jugando, tablero);
+				if(correcto) {System.out.println("CORRECTO");}
+				else {System.out.println("NO CORRECTO");}
 				//Si lo son
 				if(correcto) {
 					//Se actualizan los turnos que cuentan para que acabe la partida
 					//Si la partida acaba
 					if(actPasados(turnoAct.valido())) {
-						//owo para que se acabe la partida
+						Integrante ganador = jugando;
+						for (Integrante i : jugadores) {
+							i.convertirMonedasPuntos();
+						}
+						for(Integrante i : jugadores) {
+							if(i.getScore() > ganador.getScore()) {
+								ganador =  i;
+							}
+						}
+						for(TManagerObserver ob : observers) {
+							ob.partidaAcabada(ganador.getNick());
+						}
 					}
 					//Si la partida no acaba
 					else {
 						//Se genera el siguiente turno 
+						jugando.acabaTurno();
+						System.out.println("---------------------------------------------");
 						this.sigTurno();
 					}
 				}
@@ -450,12 +421,10 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 	}
 
 	public void addGameObserver(TableroObserver ob) {
-		// TODO Auto-generated method stub
 		tablero.addObserver(ob);
 	}
 
 	public void removeGameObserver(TableroObserver ob) {
-		// TODO Auto-generated method stub
 		tablero.removeObserver(ob);
 	}
 	
@@ -473,12 +442,24 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 	//--------------------METODOS DE LA INTERFAZ OBSERVABLE------------------------
 
 	
-	public void addJugadorObserver(JugadorObserver ob) {
-		jugando.addObserver(ob);
+	public void addJugadorObserver(JugadorObserver ob, String j) {
+		int ind = 0;
+		while(jugadores.get(ind).getNick() != j && ind < jugadores.size() - 1) {
+			ind++;
+		}
+		if(ind != jugadores.size()) {
+			jugadores.get(ind).addObserver(ob);
+		}
 	}
 		
-	public void removeJugadorObserver(JugadorObserver ob) {
-		jugando.removeObserver(ob);
+	public void removeJugadorObserver(JugadorObserver ob, String j) {
+		int ind = 0;
+		while(jugadores.get(ind).getNick() != j && ind < jugadores.size() - 1) {
+			ind++;
+		}
+		if(ind != jugadores.size()) {
+			jugadores.get(ind).removeObserver(ob);
+		}
 	}
 	
 	
@@ -503,7 +484,7 @@ public class AdminTurnos implements Originator , Observable<TManagerObserver>{
 	 */
 	public void rellenarManos() {
 		for(Integrante j : jugadores) {
-			for(int i  = j.get_mano().size(); i < MAXMANO; i++) {
+			for(int i  = j.getNumFichasMano(); i < MAXMANO; i++) {
 				j.robar(mazo.robar());
 			}
 		}

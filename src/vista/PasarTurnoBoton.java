@@ -12,13 +12,15 @@ import javax.swing.JButton;
 
 import Command.ComandoPasarTurno;
 import Excepciones.CommandExecuteException;
-import controlador.Registrador;
+import controlador.Controller;
 
 public class PasarTurnoBoton extends JButton implements MouseListener{
 	
-	private Registrador c;
+	private static final long serialVersionUID = 1L;
 	
-	public PasarTurnoBoton(Registrador c) {
+	private Controller c;
+	
+	public PasarTurnoBoton(Controller c) {
 		this.c = c;
 		initGUI();
 	}
@@ -37,7 +39,6 @@ public class PasarTurnoBoton extends JButton implements MouseListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(GamePanel.getEnable()) {
-					// TODO Auto-generated method stub
 					try {
 						c.runCommand(new ComandoPasarTurno());
 	

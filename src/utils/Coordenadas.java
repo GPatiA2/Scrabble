@@ -2,31 +2,64 @@ package utils;
 
 import org.json.JSONObject;
 
-import modelo.IMemento;
 import modelo.Memento;
 import modelo.Originator;
 
+/**
+ * Clase Coordenadas
+ * 
+ * Esta clase almacena informacion relativa a las coordenadas
+ * dentro del tablero, asi como operaciones auxiliares sobre
+ * sus atributos
+ * 
+ * @author Grupo 5
+ *
+ */
 public class Coordenadas implements Originator {
 	
+	//Atributos 
+	
+	/**
+	 * Dimensiones del tablero
+	 */
 	protected static final int COLS = 15;
 	protected static final int ROWS = 15;
 	
-	private int fila,columna;
+	/**
+	 * Fila en el tablero
+	 */
+	private int fila;
+	/**
+	 * Columna en el tablero
+	 */
+	private int columna;
 	
+	/**
+	 * Constructor vacio que asigna coordenadas (0,0)
+	 */
 	public Coordenadas() {
 		fila = 0; columna =0;
 	}
+	/**
+	 * Constructor con parametros
+	 * @param f fila
+	 * @param c columna
+	 */
 	public Coordenadas (int f, int c) {
-		
 		fila = f; columna = c;
 	}
 	
-	public int getFila() {
-		return fila;
+	
+	/**
+	 * Corrige las diferencias de enumeracion entre el usuario y
+	 * la implementacion del tablero. El tablero empieza a enumerar desde
+	 * el 0, mientras que el usuario empieza a enumerar desde el 1.
+	 */
+	public void corregir() {
+		this.columna--;
+		this.fila--;
 	}
-	public int getColumna() {
-		return columna;
-	}
+	
 	public boolean menorOIgual(Coordenadas c) {
 		//Coordenadas en horizontal
 		if(fila == c.fila && columna <= c.columna) {
@@ -40,6 +73,7 @@ public class Coordenadas implements Originator {
 			return false;
 		}
 	}
+	
 	public boolean mayorOIgual(Coordenadas c) {
 		//Coordenadas en horizontal
 		if(fila == c.fila && columna >= c.columna) {
@@ -53,6 +87,7 @@ public class Coordenadas implements Originator {
 			return false;
 		}
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -61,6 +96,7 @@ public class Coordenadas implements Originator {
 		result = prime * result + fila;
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -77,19 +113,38 @@ public class Coordenadas implements Originator {
 		return true;
 	}
 	
-	
-	public static boolean checkCommand(int x, int y) { //Comprueba que las coordenadas introducidad son correctas
+	/**
+	 * Comprueba que las coordenadas introducidas son correctas, es decir,
+	 * que no se salen del tablero
+	 */
+	public static boolean checkCommand(int x, int y) { 
 		return x < COLS && x >= 0 && y < ROWS && y >= 0;
+	}
+	
+	//--------------------METODOS AUXILIARES, GETTERS, SETTERS...--------------------
+
+	public int getFila() {
+		return fila;
+	}
+		
+	public int getColumna() {
+		return columna;
 	}
 	
 	public String toString(){
 		return "" + (int)(fila) + " " + (columna);
 	}
+	
+	
+	
+	//--------------------METODOS DE LA INTERFAZ ORIGINATOR------------------------
+
 	@Override
 	public void setMemento(Memento m) {
 		fila = m.getState().getInt("fila");
 		columna = m.getState().getInt("columna");
 	}
+	
 	@Override
 	public Memento createMemento() {
 		Memento memento = new Memento();
@@ -102,9 +157,6 @@ public class Coordenadas implements Originator {
 		
 		return memento;
 	}
-	public void corregir() {
-		this.columna--;
-		this.fila--;
-	}
+	
  
 }

@@ -14,7 +14,7 @@ import Test.CommandTests.ComandoQuitarFichaTest;
 import Test.CommandTests.ComandoSaltarJugadorTest;
 
 /**
- * Clase CommandTests
+ * Clase CommandTestsSuite
  * 
  * Esta clase corre el conjunto de pruebas unitarias sobre los comandos.
  * 

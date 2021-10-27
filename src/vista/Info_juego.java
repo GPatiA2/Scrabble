@@ -8,7 +8,9 @@ import javax.swing.JPanel;
 public class Info_juego extends JFrame {
 
 
-	
+	private static final long serialVersionUID = 1L;
+
+
 	public Info_juego (Object info){
 		super ("INFORMACION DEL JUEGO");
 		JPanel p = new JPanel ();

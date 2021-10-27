@@ -1,28 +1,22 @@
 package modelo;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.swing.JOptionPane;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import Excepciones.CommandExecuteException;
-import javafx.util.Pair;
-import modelo.Diccionario.Diccionario;
+import modelo.diccionario.Diccionario;
 import utils.Coordenadas;
-import utils.OrdenarCoordenadas;
-import utils.PalabraPosible;
 import utils.ScoredWord;
 /**
  * Clase que se encarga de manejar las reglas del juego 
+ * Se encarga de verificar que las palabras que los jugadores colocan en el tablero
+ * son validas en el juego
  * @author Grupo 5
  *
  */
@@ -41,18 +35,6 @@ public class Game implements Originator{
 	private Diccionario diccionario;
 	
 	/**
-	 * Variable bool que indica si se va a saltar el turno del jugador siguiente
-	 * @see Game#SaltarJugador()
-	 */
-	private boolean saltar;
-	/**
-	 * Variable que indica en que orden avanzan los turnos en la partida
-	 * False indica orden inverso (restando al indice)
-	 * True indica orden normal (sumando al indice)
-	 * @see #invertirSentido()
-	 */
-	private boolean orden; 
-	/**
 	 * Lista de palabras que han sido colocadas en el tablero por los jugadores
 	 * @see ScoreWord
 	 * @see #Verificar(List)
@@ -66,210 +48,22 @@ public class Game implements Originator{
 	 * @see #iniDiccionario()
 	 * @throws IOException
 	 */
-	public Game() throws IOException {
-		salir = false;
-		iniMazo();	
+	public Game(Mazo m) throws IOException {
+		mazo = m;
 		diccionario = Diccionario.getInstance();
-		tablero = new Tablero();
-		player = null;
-		saltar = false;
 		listaPalabrasVerificadas = new ArrayList<ScoredWord>();
 	}
 	
-	/**
-	 * Devuelve una referencia a la lista de palabras colocadas en el tablero
-	 * No puedes modificar lo que devuelve esta metodo
-	 * @return listaPalabrasVerificadas
-	 * @see #listaPalabrasVerificadas
-	 */
-	public List<ScoredWord> getVerificadas() {
-		return Collections.unmodifiableList(this.listaPalabrasVerificadas);
-	}
-	
-	/**
-	 * Sirve a los jugadores maquina para saber si son los primeros en colcoar
-	 * una palabra
-	 * @return t longitud de la lista de palabras ya colocadas
-	 */
-	public boolean primeraPalabra() {
-		return this.listaPalabrasVerificadas.size() == 0;
-	}
-	
-	/**
-	 * Rellena las manos del jugador activo en este momento
-	 * @see #player
-	 */
-	public void update() {
-		rellenarManos();
-	}
-	public void rellenarManos() {
-		while (player.size() < numFichasMaximo ) {
-			Ficha f = mazo.robar();
-			player.robar(f);
-			updateMano(f,this.player);
-		}
-	}
-		
-	public void exit() {
-		salir = true;
-	}
-	
-	public boolean PartidaAcabada() {
-		return salir;
-	}
-	
-	/**
-	 * Metodo que coloca una ficha en el tablero
-	 * Retira el la ficha con el ID pasado por parametro de la mano del jugador activo y la coloca en el tablero
-	 * 
-	 * @param ficha 	id unico de la ficha que se va a colocar o letra de la ficha
-	 * @param letra		si fuera un comodin, letra por la que quiero sustituir
-	 * @param c 		coordenadas (fila/columna) donde se coloca la ficha
-	 * 
-	 * @see Tablero
-	 * @see ComandoColocarFicha
-	 */
-	
-	public  void colocaFicha (String ficha,char letra, Coordenadas c) {
-		Ficha ficha_colocar = null;
-		boolean colocada = false;
-		try {
-			
-			//Checkeo si son validas : ya que si estan fuera del tablero no debo
-			//colocar la ficha
-			if (Coordenadas.checkCommand(c.getFila(), c.getColumna())) {
-					//Busco que la ficha este en la mano del jugador
-				if(player.size() > 0 && tablero.emptyCasilla(c.getFila(), c.getColumna())) {
-					if( tablero.esDisponible(c.getFila(), c.getColumna()) ) {
-						
-						ficha_colocar = player.ExisteFicha(ficha);//Si no existe la ficha lanzo una excepcion
-						if(ficha_colocar !=null) {
-							if(letra != '0') {
-								ficha_colocar.setFicha(letra, 0);
-							}
-							//Si todo ha salido bien, a�ado la ficha al tablero en las coordenadas correspondientes
-							
-							tablero.aniadeFicha(ficha_colocar, c.getFila(), c.getColumna());
-							//Actualizo la GUI del tablero
-							
-							this.updateTablero(c,ficha_colocar);
-							colocada = true;
-						}			
-						else {
-							
-							throw new CommandExecuteException("Esa ficha no pertenece a su mano");
-						}									
-					}
-					else {
-						throw new CommandExecuteException("Solo puedes poner una ficha al lado de una casilla que contenga otra, o si es el primer turno, en el centro");
-					}
-				}	
-				else {
-					throw new CommandExecuteException("Debes tener una ficha en la mano para poder colocarla");
-				}
-			}
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		for(GameObserver o : this.observadores) {
-			if(ficha_colocar == null) ficha_colocar = new Ficha(); 
-			if(!ficha.equals("*"))ficha_colocar.setId(ficha);
-			o.borrarFichaMano(ficha_colocar, this.player, colocada);
-		}		
-	}
-	
-	/**
-	 * Quita una ficha del tablero y la devuelve a la mano del jugador
-	 * @param c Coordenadas donde se encuentra la ficha que se quiere quitar
-	 * @throws CommandExecuteException
-	 * @see Tablero
-	 * @see ComandoQuitarFicha
-	 */
-	public void quitarFicha(Coordenadas c) throws CommandExecuteException {
-		Ficha f = tablero.quitarFicha(c.getFila(),c.getColumna());
-		player.robar(f);
-		for(GameObserver ob : observadores) {
-			ob.actualizaCasilla(c, tablero.getCasilla(c.getFila(),c.getColumna()));
-			ob.fichaRobada(f, player);
-		}
-	}
-	
-	/**
-	 * Comprueba si la casilla central es disponible 
-	 * @return b atributo disponible de la casilla central
-	 * @see Casilla
-	 */
-	public boolean checkCentro() {
-		return tablero.centroDisponible();
-	}
-	
-	//Funcion que calcula cual es el siguiente turno. La he puesto aqui para que en un futuro, las ventajas
-	//	sean capaces de alterar el orden de los turnos. (saltarse uno por ej)
-	/**
-	 * Calcula el indice del jugador siguiente 
-	 * @param act Indice en la lista de jugadores del turno actual
-	 * @return aux Indice en la lista de jugadores del jugador siguiente 
-	 * 
-	 * @see AdminTurnos
-	 */
-	public int getSigTurno(int act) {
-		
-		int aux;
-		
-		if (orden) {
-			aux = act-1;
-			if (saltar) {
-				aux--;
-				saltar = false;
-			}
-		}
-		
-		else {
-			aux = act+1;
-			if (saltar) {
-				aux++;
-				saltar = false;
-			}
-		}
-		
-		return aux;
-	}
-
-	/**
-	 * Inicializa el mazo haciendo uso de la clase GeneradorMazo
-	 * @see mazo
-	 * @see GeneradorMazo
-	 * @throws IOException
-	 */
-	private void iniMazo() throws IOException {
-		
-		/*
-		 * Este metodo genera un mazo a partir de un archivo .json
-		 * A continuacion, el GeneradorMazo se encarga de leer la entrada del fichero y
-		 * de mezclar las fichas que recibe. Devuelve una coleccion de solo lectura que tiene
-		 * las fichas en un orden aleatorio y se construye el mazo con esa coleccion 
-		 *
-		 */
-		
-		InputStream entrada = new FileInputStream(new File("src/ArchivoCarga/mazo.json"));
-		GeneradorMazo g_m= new GeneradorMazo(entrada);
-		mazo = new mazo(g_m.getRandomStack());
-	}
-	
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Numero de fichas restantes en el mazo : " + mazo.getNumFichas() + '\n');
-		return sb.toString();
-	}
 		
 	/**
 	 * Recibe una lista de coordenadas en las que el jugador ha colocado una ficha
 	 * y comprueba que se han formado palabras correctamente
-	 * @param lista lista de cooredendas donde el jugador ha colocado fichas
+	 * @param lista lista de coordenadas donde el jugador ha colocado fichas
+	 * @param j jugador
+	 * @param tablero tablero del juego
 	 * @return b 	true si se han formado palabras correctamente
 	 * @see ComandoPasarTurno
-	 * @see ScoredWord
+	 * @see ScoreWord
 	 */
 	public boolean Verificar(List<Coordenadas> lista, Integrante j, Tablero tablero) {
 		
@@ -384,6 +178,8 @@ public class Game implements Originator{
 						//Construyo el ScoredWord
 						coor_ini = new Coordenadas(coor.getFila(),col_ini); 
 						coor_fin = new Coordenadas(coor.getFila(),col_fin); 
+						
+						//TODO: valorPalabra con sentido vertical (en vez de true->false)
 						puntos = this.valorPalabra(coor_ini,coor_fin,true, tablero );
 						
 						verificada = new ScoredWord(palabra,puntos,coor_ini,coor_fin);
@@ -441,9 +237,6 @@ public class Game implements Originator{
 		this.listaPalabrasVerificadas.addAll(listScoredWord);
 		return !listScoredWord.isEmpty() ||lista.isEmpty();
 	}
-		
-	
-	
 	
 	/**
 	 * Este metodo calcula la puntuacion total de una palabra
@@ -461,10 +254,10 @@ public class Game implements Originator{
 	public int valorPalabra(Coordenadas c1,Coordenadas c2,boolean dir, Tablero tablero) {
 		int puntos  = 0;
 		int multiplicador_palabra=1;
-		if(dir) {
+		if(dir) { //Horizontal
 			for(int i = c1.getColumna();i<=c2.getColumna();i++) {
 				if(tablero.getMultiplicador(c1.getFila(),i)<4) {
-				puntos += tablero.getFicha(c1.getFila(), i).getPuntos()* tablero.getMultiplicador(c1.getFila(),i);
+				puntos += tablero.getFicha(c1.getFila(), i).getPuntos() * tablero.getMultiplicador(c1.getFila(),i);
 				}
 				else {
 					puntos += tablero.getFicha(c1.getFila(), i).getPuntos();
@@ -472,10 +265,11 @@ public class Game implements Originator{
 				}
 			}
 		}
-		else {
+		else { //Vertical
 			for(int i = c1.getFila();i<=c2.getFila();i++) {
+		
 				if(tablero.getMultiplicador(i,c1.getColumna())<4) {
-					puntos += tablero.getFicha(i, c1.getColumna()).getPuntos()* tablero.getMultiplicador(i,c1.getColumna());
+					puntos += tablero.getFicha(i, c1.getColumna()).getPuntos() * tablero.getMultiplicador(i,c1.getColumna());
 				}
 				else {
 					puntos += tablero.getFicha(i, c1.getColumna()).getPuntos();
@@ -487,7 +281,46 @@ public class Game implements Originator{
 		return puntos;
 	}
 	
-	//metodos de la interfaz Originator
+	
+	//--------------------METODOS AUXILIARES, GETTERS, SETTERS...------------------------
+
+	/**
+	 * Devuelve una referencia a la lista de palabras colocadas en el tablero
+	 * No puedes modificar lo que devuelve esta metodo
+	 * @return listaPalabrasVerificadas
+	 * @see #listaPalabrasVerificadas
+	 */
+	public List<ScoredWord> getVerificadas() {
+		return Collections.unmodifiableList(this.listaPalabrasVerificadas);
+	}
+	
+	/**
+	 * Sirve a los jugadores maquina para saber si son los primeros en colcoar
+	 * una palabra
+	 * @return t longitud de la lista de palabras ya colocadas
+	 */
+	public boolean primeraPalabra() {
+		return this.listaPalabrasVerificadas.size() == 0;
+	}
+
+	/**
+	 * Devuelve el numero de fichas restantes en el mazo
+	 * @return string
+	 */
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Numero de fichas restantes en el mazo : " + mazo.getNumFichas() + '\n');
+		return sb.toString();
+	}
+	
+	public static boolean isNumeric(String str)	{
+
+		//Metodo que devuelve si un string es un numero
+		  return str.matches("-?\\d+(\\.\\d+)?");  
+	}
+	
+	
+	//--------------------METODOS DE LA INTERFAZ ORIGINATOR------------------------
 	
 	@Override
 	public void setMemento(Memento m) {
@@ -524,10 +357,5 @@ public class Game implements Originator{
 		return memento;
 	}
 		
-	public static boolean isNumeric(String str)	{
-
-		//Metodo que devuelve si un string es un numero
-		  return str.matches("-?\\d+(\\.\\d+)?");  
-	}
 
 }

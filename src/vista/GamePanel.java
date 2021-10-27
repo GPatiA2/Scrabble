@@ -10,10 +10,14 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
-import controlador.Registrador;
+import controlador.Controller;
 import modelo.Ficha;
 import modelo.Integrante;
 import modelo.TManagerObserver;
@@ -21,14 +25,16 @@ import utils.Coordenadas;
 
 public class GamePanel extends JPanel implements TManagerObserver {
 
-	private Registrador c;
+	private static final long serialVersionUID = 1L;
+	
+	private Controller c;
 	private JPanel manoCont;
 	private PanelMano mano;
 	private PanelTablero tablero;
 	private PanelJugadores jugadores;
 	private static boolean enable;
 	
-	public GamePanel(Registrador c) {
+	public GamePanel(Controller c) {
 		this.c = c;
 		initGui();
 		registerOn(c);
@@ -54,11 +60,18 @@ public class GamePanel extends JPanel implements TManagerObserver {
 		botones.add(new GuardarBoton(c));
 		botones.add(new ComprarBoton(c));
 		botones.add(Box.createRigidArea(new Dimension(20,50)));
-		botones.add(new LogoBoton(this));
+		
+		JButton logo = new JButton(new ImageIcon("Dibujos/logo.png"));
+		logo.setPreferredSize(new Dimension(130,50));
+		logo.setOpaque(false);
+		logo.setContentAreaFilled(false);
+		logo.setBorderPainted(false);
+		
+		botones.add(logo);
 		
 		jugadores = new PanelJugadores(c);
 		tablero = new PanelTablero(c);
-		mano = new PanelMano(c);
+		mano = new PanelMano(c, jugadores.getAct());
 		manoCont = new JPanel();
 		manoCont.setLayout(new BorderLayout());
 		
@@ -85,7 +98,7 @@ public class GamePanel extends JPanel implements TManagerObserver {
 	}
 
 	@Override
-	public void registerOn(Registrador c) {
+	public void registerOn(Controller c) {
 		c.addTManagerObserver(this);
 	}
 
@@ -95,7 +108,7 @@ public class GamePanel extends JPanel implements TManagerObserver {
 	@Override
 	public void nuevoTurno(Integrante i, String act, String sig) {
 		mano = null;
-		mano = new PanelMano(c);
+		mano = new PanelMano(c, i.getNick());
 		manoCont.add(mano, BorderLayout.CENTER);
 		manoCont.validate();
 		manoCont.repaint();
@@ -104,15 +117,15 @@ public class GamePanel extends JPanel implements TManagerObserver {
 
 	@Override
 	public void onError(String err,String nick) {
-		
+		JOptionPane.showMessageDialog(this, err);
 	}
 
 	@Override
 	public void onRegister(String act, String sig) {}
 
 	@Override
-	public void turnoAcabado() {
-		c.removeJugadorObserver(mano);
+	public void turnoAcabado(String j) {
+		c.removeJugadorObserver(mano, jugadores.getAct());
 		manoCont.removeAll();
 		manoCont.updateUI();
 		manoCont.validate();
@@ -125,6 +138,15 @@ public class GamePanel extends JPanel implements TManagerObserver {
 	}
 	public static boolean getEnable() {
 		return enable;
+	}
+
+	@Override
+	public void partidaAcabada(String nick) {
+		// TODO Auto-generated method stub
+		JOptionPane.showMessageDialog(this, "El ganador es " + nick);
+		SwingUtilities.getWindowAncestor(this).dispose();
+		MenuPpal mp = new MenuPpal();
+		mp.setVisible(true);
 	}
 }
 

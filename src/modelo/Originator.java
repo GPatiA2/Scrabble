@@ -1,5 +1,15 @@
 package modelo;
 
+/**
+ * Interfaz Originator
+ * 
+ * Contiene metodos para generar y recibir
+ * objetos que encapsulen el estado de dichos
+ * objetos en un momento determinado
+ * 
+ * @author Grupo 5
+ *
+ */
 public interface Originator {
 	/**
 	 * Recibe un objeto que encapsula el estado de este objeto en un momento determinado

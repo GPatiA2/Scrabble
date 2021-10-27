@@ -2,26 +2,59 @@ package modelo;
 
 import org.json.JSONObject;
 
+/**
+ * Clase Ficha
+ * 
+ * Contiene informacion relativa a las fichas
+ * del juego.
+ * 
+ * @author Grupo 5
+ *
+ */
 public class Ficha implements Originator{
-	
+	/**
+	 * Numero identificador
+	 */
 	private static int idNumber = 0;
-	
+	/**
+	 * Letra de la ficha
+	 */
 	private char letra;
+	/**
+	 * Puntos de la ficha
+	 */
 	private int puntos;
+	/**
+	 * Identificador unico de la ficha
+	 */
 	private String id;
 	
+	/**
+	 * Constructor con parametros
+	 * @param letra
+	 * @param puntos
+	 */
 	public Ficha(char letra, int puntos) {
 		this.letra = letra;
 		this.puntos = puntos;
 		id = generateID();
 	}
 	
-	public Ficha() { //Constructora sin parametros para cargar una partida
+	/**
+	 * Constructor sin parametros
+	 * usado para cargar una partida
+	 */
+	public Ficha() { 
+		
 	}
+	
+	//--------------------METODOS AUXILIARES, GETTERS, SETTERS...------------------------
+
 	public void setFicha(char letra,int puntos) {
 		this.letra = letra;
 		this.puntos = puntos;
 	}
+	
 	private static String generateID() {
 		idNumber++;
 		return "f_"+ idNumber;
@@ -35,17 +68,18 @@ public class Ficha implements Originator{
 	
 	public char getLetra() {return this.letra;}
 	
-	public String toString() {return letra+"["+puntos+"]";}
-	
 	public boolean igual_letra(char f) {
 		return Character.toLowerCase(f) == Character.toLowerCase(this.letra);
 	}
+	
 	public boolean esComodin() {
 		return this.igual_letra('*');
 	}
+	
 	public boolean igual_id(String id) {
 		return this.id.equals(id);
 	}
+	
 	public String getId() {
 		return id;
 	}
@@ -79,6 +113,10 @@ public class Ficha implements Originator{
 			return false;
 		return true;
 	}
+	
+	public String toString() {return letra+"["+puntos+"]";}
+
+	//--------------------METODOS DE LA INTERFAZ ORIGINATOR------------------------
 
 	@Override
 	public void setMemento(Memento m) { 

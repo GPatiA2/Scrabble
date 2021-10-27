@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -18,25 +19,32 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import Cliente.TraductorCliente;
+import Cliente.EstadoCliente;
+import CommandLobby.CommandLogin;
+import Servidor.LobbyObserver;
+import controlador.Controller;
+import controlador.ControllerLobby;
 
 
-public class LoginPanel extends JPanel {
+public class LoginPanel extends JPanel implements LobbyObserver<String>{
 	
-	private MainWindow MainWindow;
+	private static final long serialVersionUID = 1L;
+	
+	private ControllerLobby<String> c;
+	private MainWindow u;
 	private JTextField nombreJugador;
 	private Image fondo;
-	private static int numJugadores = 1;
 	
 	private JLabel nombreLabel;
 	private JLabel icon;
 	private JButton login;
-	private JButton returnB;
 	
-	public LoginPanel(MainWindow MainWindow) {
-		this.MainWindow = MainWindow;
+	public LoginPanel(ControllerLobby<String> c,MainWindow u) {
+		this.c = c;
+		this.u = u;
 		fondo = new ImageIcon("Dibujos/fondo.jpg").getImage();
 		this.init();
+		c.addLobbyObserver(this);
 	}
 	
 	private void init() {
@@ -81,7 +89,7 @@ public class LoginPanel extends JPanel {
 		nombreLabel.setFont(new Font("Arial", Font.BOLD, 20));
 		nombreLabel.setForeground(Color.black);
 	
-		this.nombreJugador = new JTextField("Jugador"+ numJugadores++);
+		this.nombreJugador = new JTextField("Jugador");
 		nombreJugador.setFont(new Font("Arial", Font.BOLD, 15));
 		nombreJugador.setPreferredSize(new Dimension(120, 40));
 		nombreJugador.setEditable(true);
@@ -101,23 +109,13 @@ public class LoginPanel extends JPanel {
 		login.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				TraductorCliente.getTraductor().LoginRequest(nombreJugador.getText().replaceAll("\\s",""));
+				c.executeCommandLobby(new CommandLogin(nombreJugador.getText()));
 			}
 		});		
 	
 		
-		this.returnB = new JButton("RETURN");
-		
-		returnB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				MainWindow.setVista((Cliente.EstadoCliente.START));
-			}
-		});
-		
 		inferior.add(login);
 		inferior.add(Box.createRigidArea(new Dimension(20,20)));
-		inferior.add(returnB);
 		
 		// - - - - - - - - - - - - - - - - -
 		
@@ -135,5 +133,40 @@ public class LoginPanel extends JPanel {
 		super.paintComponent(g);
 		g.drawImage(this.fondo,0,0,this.getParent().getWidth(),this.getParent().getHeight(),this);
 	}
+
+	@Override
+	public void loginCorrect(String j) {
+		u.setVista(EstadoCliente.LOBBY);
+	}
+	@Override
+	public void InfoRequest(String j) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void refresh(List<String> j, String creador) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void start_game() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void Error(String j, String error) {
+		this.u.mostrar(error);
+	}
+
+	@Override
+	public void registerOn(Controller c) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

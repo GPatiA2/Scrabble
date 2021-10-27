@@ -2,11 +2,9 @@ package Test.GeneradoresTests;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
-import java.io.FileInputStream;
+
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -32,12 +30,11 @@ public class GeneradorMazoTest {
 	 *  Ruta de acceso al archivo donde se encuentra el mazo
 	 */
 	private GeneradorMazo g;
-	private InputStream in;
 	
 	/**
      * Antes de ejecutar cada prueba se genera un mazo a partir del fichero que contiene el mazo
      * @see src/ArchivoCarga/mazo.json
-     * @see Modelo.GeneradorMazo 
+     * @see src/Modelo/GeneradorMazo.java 
      * @throws IOException si no se puede abrir el fichero o hay problemas con el JSONObject
      */
 	@Before
@@ -48,19 +45,33 @@ public class GeneradorMazoTest {
 	}
 	
 	/**
-     * Comprueba que el mazo contiene fichas
+     * Comprueba que el mazo contiene fichas y que el numero de comodines en el mazo
+     * es dos, conforme a las reglas del juego.
+     * @see /Documentos/Reglas.docx
+     * 
 	 * @throws IOException en caso de no poder leer el JSONObject del archivo de entrada
-     * @see Modelo 
+     * @see src/Modelo/GeneradorMazo.java
+     * @see src/ArchivoCarga/mazo.json archivo que contiene los distintos tipos de fichas del juego
      */
 	@Test
 	public void testCarga() throws IOException {
 		g.generate();
-		assertTrue("El mazo no contiene fichas", g.getF().size()>0);
+		List<Ficha> mazo = g.getF();
+		int comodines = 0;
+		assertTrue("El mazo no contiene fichas", mazo.size()>0);
+		for(int i = 0 ; i < mazo.size(); ++i) {
+			if(mazo.get(i).igual_letra('*')) {
+				comodines++;
+			}
+		}
+		assertTrue(comodines == 2);
 	}
 	
 	/**
-     * Comprueba que el mazo generado se mezcla
-     * @see Modelo 
+     * Comprueba que el mazo generado se mezcla correctamente
+     * 
+     * @see src/Modelo/GeneradorMazo.java
+     * @see src/ArchivoCarga/mazo.json archivo que contiene los distintos tipos de fichas del juego
      */
 	@Test
 	public void testMezcla() {

@@ -1,18 +1,24 @@
 package Test;
 
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Test;
 
 import Servidor.JugadorConectado;
 import Servidor.Lobby;
-import Servidor.LobbyObserver;
+/**
+ * Clase LobbyTest
+ * 
+ * Contiene pruebas para verificar
+ * la funcionalidad de la clase Lobby.java,
+ * clase en la que se registran los jugadores antes
+ * de comenzar la partida
+ * 
+ * @author Grupo 5
+ *
+ */
 public class LobbyTest {
 
 	

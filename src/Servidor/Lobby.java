@@ -1,12 +1,8 @@
 package Servidor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import controlador.Controller;
-import modelo.Game;
-import modelo.Jugador;
 import modelo.Observable;
 /**
  * Lobby en el que se registran los jugadores antes de comenzar
@@ -14,7 +10,7 @@ import modelo.Observable;
  *
  */
 
-public class Lobby{
+public class Lobby implements Observable<LobbyObserver<JugadorConectado>>{
 	/**
 	 * Creador del lobby
 	 * */
@@ -26,7 +22,7 @@ public class Lobby{
 	/**
 	 * lista de los observadores del lobby
 	 */
-	private List<LobbyObserver> observers;
+	private List<LobbyObserver<JugadorConectado>> observers;
 	/**
 	 * maximo numero de jugadores que puede entrar al lobby
 	 */
@@ -58,13 +54,13 @@ public class Lobby{
 		}		
 		if(!lobbyFull()) {
 			this.listaJugadores.add(j);
-			for(LobbyObserver o : this.observers) {
+			for(LobbyObserver<JugadorConectado> o : this.observers) {
 				o.loginCorrect(j);
 			}
 		}		
 		else {
-			for(LobbyObserver o : this.observers) {
-				o.lobby_full(j);
+			for(LobbyObserver<JugadorConectado> o : this.observers) {
+				o.Error(j, "Lobby full, intentelo en unos minutos");
 			}
 		}
 	}
@@ -79,10 +75,10 @@ public class Lobby{
 		
 		this.listaJugadores.remove(j);
 		if (j.getNick()!=null && this.esCreador(j)){
-			if (listaJugadores.isEmpty()) creador = null;
+			if (listaJugadores.isEmpty()) { creador = null; this.maxJugadores = 8;}
 			
 			else creador = listaJugadores.get(0);
-			
+		
 		}
 	}
 	
@@ -149,20 +145,20 @@ public class Lobby{
 	 */
 	public void login(JugadorConectado j) {
 		if (this.listaJugadores.contains(j)) {
-			for(LobbyObserver o : this.observers) {
-				o.loginError(j);
-			}
+			this.reportLoginError(j);
 		}
 		else {
-			this.addJugador(j);		
+			this.addJugador(j);	
+			this.InfoRequest(j);
 		}
+		
 		
 	}
 	/**
 	 * Notifica a los {@link #observers} de que se quiere refrescar esta lista
 	 */
 	public void refresh() {
-		for(LobbyObserver o : this.observers) {
+		for(LobbyObserver<JugadorConectado> o : this.observers) {
 			o.refresh(this.getListaJugadores(),creador);
 		}
 	}
@@ -177,14 +173,12 @@ public class Lobby{
 	 */
 	public boolean play(JugadorConectado j) {
 		if (esCreador(j)) {
-			for(LobbyObserver o : this.observers) {
+			for(LobbyObserver<JugadorConectado> o : this.observers) {
 				o.start_game();
 			}	
 		}
 		else {
-			for(LobbyObserver o : this.observers) {
-				o.start_game_error(j);
-			}
+			this.reportGameStartError(j);
 		}
 		return esCreador(j);
 	}
@@ -194,20 +188,15 @@ public class Lobby{
 	 * @see #esCreador(JugadorConectado)
 	 * @param jugador
 	 */
-	public void numJugadores(JugadorConectado jugador) {
+	private void InfoRequest(JugadorConectado jugador) {
 		if (esCreador(jugador)) {
-			for(LobbyObserver o : this.observers) {				
-				o.numJugadoresCorrect(jugador);							
+			for(LobbyObserver<JugadorConectado> o : this.observers) {				
+				o.InfoRequest(jugador);							
 			}
 		}
 	}
-	/**
-	 * Añade un observador a la lista de {@link #observers} del lobby
-	 * @param o LobbyObserver
-	 */
-	public void addObserver(LobbyObserver o) {
-		this.observers.add(o);
-	}
+	
+	
 	/**
 	 * Permite establecer el nivel de las IAs
 	 * @param nivel
@@ -222,13 +211,24 @@ public class Lobby{
 	public String getDificultad() {
 		return this.nivel;
 	}
-	/**
-	 * Método que pide la dificultad de la IA
-	 */
-	public void pedirDificultad() {
-		for (LobbyObserver o : this.observers) {
-			o.GetDificultad(creador);
+	@Override
+	public void addObserver(LobbyObserver<JugadorConectado> o) {
+		this.observers.add(o);
+	}
+	@Override
+	public void removeObserver(LobbyObserver<JugadorConectado> o) {
+		this.observers.remove(o);
+	}
+
+	protected void reportLoginError(JugadorConectado j) {
+		for(LobbyObserver<JugadorConectado> o : this.observers) {
+			o.Error(j, "Ese nick ya esta registrado");
 		}
 	}
 
+	protected void reportGameStartError(JugadorConectado j) {
+		for(LobbyObserver<JugadorConectado> o : this.observers) {
+			o.Error(j, "Solo puede comenzar el juego el creador");
+		}
+	}
 }

@@ -1,6 +1,5 @@
 package modelo;
 
-import java.util.List;
 
 /**
  * Interfaz que implementan los objetos que observan los cambios en 
@@ -25,7 +24,7 @@ public interface TManagerObserver extends ModelObserver {
 	 */
 	public void nuevoTurno(Integrante i, String act, String sig);
 
-	public void turnoAcabado();	
+	public void turnoAcabado(String j);	
 	
 	/**
 	 * Metodo para notificar un error a un jugador por la GUI
@@ -35,5 +34,8 @@ public interface TManagerObserver extends ModelObserver {
 	public void onError(String err, String nick);	
 	
 	public void onRegister(String act, String sig);
+
+
+	public void partidaAcabada(String nick);
 	
 }

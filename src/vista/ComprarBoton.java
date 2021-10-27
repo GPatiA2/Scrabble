@@ -9,14 +9,16 @@ import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import controlador.Registrador;
+import controlador.Controller;
 
 
 public class ComprarBoton extends JButton implements MouseListener{
 	
-	private Registrador res;
+	private static final long serialVersionUID = 1L;
 	
-	public ComprarBoton(Registrador res) {
+	private Controller res;
+	
+	public ComprarBoton(Controller res) {
 		this.res = res;
 		initGUI();
 	}

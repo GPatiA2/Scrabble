@@ -18,13 +18,9 @@ import modelo.Turno;
  *
  */
 public class ComandoSalida extends Command{
-	/**
-	 * Informacion de ayuda sobre el comando de salida
-	 */
-	private static final String help = "Este comando permite abandonar la partida.";
 	
 	public ComandoSalida() {
-		super("salir", ProtocoloComunicacion.LOGOUT_REQUEST,"s", "Salir del juego", help);
+		super("salir", ProtocoloComunicacion.LOGOUT_REQUEST,"s");
 	}
 	
 	@Override

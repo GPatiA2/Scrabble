@@ -37,6 +37,8 @@ public class PalabraPosible {
 		fichas.remove(f);
 	}
 	
+	//--------------------METODOS AUXILIARES, GETTERS, SETTERS...--------------------
+
 	public int getPuntos() {
 		return puntos;
 	}

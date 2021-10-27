@@ -1,0 +1,21 @@
+
+-- Para ejecutar el juego en local:
+	1. Hacer run de la clase main.
+	2. Elegir 'Partida Local'.
+	3. Introducir los juegadores (al introducir un jugador dar enter).
+	4. Elegir la dificultad de las maquinas.
+	5. Elegir el número de máquinas.
+
+-- Para ejecutar el juego en red:
+	1. Hacer run de la clase main
+	2. Elegir 'Alojar partida en red' -> para crear el servidor y un cliente.
+	(opcional) 2.1 Hacer run de la clase main y elegir 'unirse a partida en red' tantas veces como clientes se quieran añadir al inicial
+	3. Introducir el nick.
+	4. El primer cliente que lo introduzca, elige el numero totales de jugadores (si no se llegara a este maximo se rellenan en el juego
+	    con máquinas) y la dificultad de las máquinas por si se añadireran.
+	(opcional) Si se crearon más clintes introducir sus nicks.
+	5. El creador da a 'Start Game' cuando considere.
+
+-- Para cargar partida
+	1. Hacer run de la clase main
+	2. Elegir Cargar Partida y elegir el archivo a cargar.

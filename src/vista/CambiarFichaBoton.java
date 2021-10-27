@@ -13,13 +13,14 @@ import javax.swing.JOptionPane;
 
 import Command.ComandoCambiarFicha;
 import Excepciones.CommandExecuteException;
-import controlador.Registrador;
+import controlador.Controller;
 
 public class CambiarFichaBoton extends JButton implements MouseListener{
 	
-	private Registrador c;
+	private static final long serialVersionUID = 1L;
+	private Controller c;
 	
-	public CambiarFichaBoton(Registrador c) {
+	public CambiarFichaBoton(Controller c) {
 		this.c = c;
 		initGUI();
 	}

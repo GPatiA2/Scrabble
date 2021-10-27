@@ -1,17 +1,13 @@
 package vista;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
-import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,21 +15,31 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
-import Cliente.TraductorCliente;
+import Cliente.EstadoCliente;
 
-public class LobbyPanel extends JPanel {
+import CommandLobby.CommandInfoRequest;
+import Servidor.LobbyObserver;
+import controlador.Controller;
+import controlador.ControllerLobby;
+
+public class LobbyPanel extends JPanel implements LobbyObserver<String> {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private MainWindow MainWindow;
+	private ControllerLobby<String> c;
 	private Image fondo;
 	private JPanel listaJugadores;
 	private JLabel creadorLabel;
 	private JList<String> lista;
 	
-	public LobbyPanel(MainWindow MainWindow) {
+	public LobbyPanel(ControllerLobby<String> c, MainWindow MainWindow) {
 		this.MainWindow = MainWindow;
+		this.c = c;
 		lista = new JList<String>();
-		fondo = new ImageIcon("Dibujos/fondo.jpg").getImage();
+		fondo = new ImageIcon("Dibujos/fondo.jpg").getImage();		
 		this.init();
+		c.addLobbyObserver(this);
 	}
 	
 	private void init() {
@@ -66,53 +72,55 @@ public class LobbyPanel extends JPanel {
 		start.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				TraductorCliente.getTraductor().gameRequest();
+				c.gameRequest();
 			}
 		});
-		
-		JButton returnB = new JButton("RETURN");
-		returnB.setBounds(400, 650, 150, 40);
-		this.add(returnB);
-		
-		returnB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				MainWindow.setVista((Cliente.EstadoCliente.START));
-			}
-		});
-		TraductorCliente.getTraductor().RefreshRequest();
 	}
 	
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		System.out.println("OEOPFO");
 		g.drawImage(this.fondo,0,0,this.getParent().getWidth(),this.getParent().getHeight(),this);
 	}
 
-	public void mostrarLista(String jugadoreslista) {
+	@Override
+	public void loginCorrect(String j) {
+		// TODO Auto-generated method stub
 		
-		DefaultListModel<String> modelo = new DefaultListModel<String>();
-		
-		String[] lista = jugadoreslista.split(" ");
-		boolean creador = false;
-		for(String l : lista ) {
-			if (l.equals("creador")){
-				creador = true;
-			}
-			else if(!l.equals("invitado")) {
+	}
 
-				if (creador) {
-					this.creadorLabel.setText("CREADOR : "+l);
-					creador = false;
-				}
-				modelo.addElement(l);
-			}
-			
+	@Override
+	public void InfoRequest(String j) {
+		int max = this.MainWindow.PedirNumJugadores();
+		String nivel = this.MainWindow.PedirDificultadMaquinas();
+		this.c.executeCommandLobby(new CommandInfoRequest(max,nivel));
+	}
+
+	@Override
+	public void refresh(List<String> j, String creador) {
+		DefaultListModel<String> modelo = new DefaultListModel<String>();
+		for(String i : j) {
+			modelo.addElement(i);
 		}
-		
 		this.lista.setModel(modelo);
-	
+		this.creadorLabel.setText("Creador: "+creador);
+	}
+
+	@Override
+	public void start_game() {
+		this.MainWindow.setVista(EstadoCliente.GAME);
+	}
+
+
+	@Override
+	public void Error(String j, String error) {
+		this.MainWindow.mostrar(error);
+	}
+
+	@Override
+	public void registerOn(Controller c) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

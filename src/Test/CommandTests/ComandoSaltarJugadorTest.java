@@ -2,12 +2,13 @@ package Test.CommandTests;
 
 import static org.junit.Assert.*;
 
+
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -15,7 +16,6 @@ import Command.ComandoSaltarJugador;
 import Command.Command;
 import Excepciones.CommandExecuteException;
 import modelo.AdminTurnos;
-import modelo.GeneradorDiccionario;
 import modelo.GeneradorMazo;
 import modelo.Integrante;
 import modelo.Jugador;
@@ -42,13 +42,11 @@ public class ComandoSaltarJugadorTest {
 	private static List<Integrante> lJugadores;
 	private static AdminTurnos adminTurnos;
 	
-	private Turno turno;
 	private Command c;
 		
 	@BeforeClass
 	static public void init() throws IOException {
 		GeneradorMazo genMazo = new GeneradorMazo();
-		GeneradorDiccionario genDic = new GeneradorDiccionario();
 			
 		lJugadores = new ArrayList<Integrante>();
 		for(int i = 0; i < numJugadores; ++i) {
@@ -57,7 +55,7 @@ public class ComandoSaltarJugadorTest {
 		}
 			
 		//Se crea un adminTurnos con la lista de jugadores
-		adminTurnos = new AdminTurnos(genMazo, genDic, lJugadores);
+		adminTurnos = new AdminTurnos(genMazo, lJugadores);
 	}
 	
 	/**

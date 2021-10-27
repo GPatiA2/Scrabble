@@ -4,8 +4,6 @@ import Excepciones.CommandExecuteException;
 import Excepciones.CommandParseException;
 import Servidor.ProtocoloComunicacion;
 import modelo.Ficha;
-import modelo.Game;
-import modelo.TableroObserver;
 import modelo.Integrante;
 import modelo.Mazo;
 import modelo.Tablero;
@@ -23,17 +21,13 @@ import modelo.Turno;
 public class ComandoCambiarFicha extends Command {
 
 	/**
-	 * Informacion de ayuda sobre el comando cambiar de ficha
-	 */
-	private final static String help = "Este comando te permite sustituir una de las fichas de tu mano por otra escogida al azar del mazo";
-	/**
 	 * Letra de la ficha a cambiar
 	 */
 	private char letra;
 
 	
 	public ComandoCambiarFicha(char letra) {
-		super("Cambiar ficha" ,ProtocoloComunicacion.CAMBIAR_FICHA, "sw", "Sw / swap <letra>", help);
+		super("Cambiar ficha" ,ProtocoloComunicacion.CAMBIAR_FICHA, "sw");
 		this.letra = letra;
 	}
 	

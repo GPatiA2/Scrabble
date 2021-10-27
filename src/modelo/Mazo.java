@@ -8,11 +8,25 @@ import java.util.Random;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class Mazo implements Originator 
-{
+/**
+ * Clase Mazo
+ * 
+ * Esta clase guarda el mazo con las
+ * fichas del juego y contiene operaciones
+ * basicas para interactuar con el mismo
+ * 
+ * @author Grupo 5
+ *
+ */
+public class Mazo implements Originator {
+	/**
+	 * Lista de fichas (mazo)
+	 */
 	 private List<Ficha> mazo;
 	 
-	    //Constructor
+	 /**
+	  * Constructor del mazo
+	  */
 	    protected Mazo(){
 	        //Crear el mazo
 	    	mazo = new LinkedList<Ficha>();   
@@ -34,6 +48,7 @@ public class Mazo implements Originator
 				return null;
 			}
 	    }
+		
 	    public void anniadir(Ficha f) {
 	    	mazo.add(f);
 	    }
@@ -71,6 +86,8 @@ public class Mazo implements Originator
 			return this.mazo;
 		}
 		
+		//--------------------METODOS DE LA INTERFAZ ORIGINATOR------------------------
+
 		@Override
 		public void setMemento(Memento m) {
 			mazo.clear(); //Limpiar mazo por si hubiera fichas 

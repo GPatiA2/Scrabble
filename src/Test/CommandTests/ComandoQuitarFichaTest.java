@@ -2,6 +2,7 @@ package Test.CommandTests;
 
 import static org.junit.Assert.*;
 
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ import Command.Command;
 import Excepciones.CommandExecuteException;
 import modelo.AdminTurnos;
 import modelo.Ficha;
-import modelo.GeneradorDiccionario;
 import modelo.GeneradorMazo;
 import modelo.Integrante;
 import modelo.Jugador;
@@ -40,21 +40,19 @@ public class ComandoQuitarFichaTest {
 		
 	private Command c;
 	private AdminTurnos adminTurnos;
-	private Turno turno;
 	private List<Integrante> lJugadores;
 	private Ficha fichaPrueba; 
 		
 	@Before
 	public void init() throws IOException {
 		GeneradorMazo genMazo = new GeneradorMazo();
-		GeneradorDiccionario genDic = new GeneradorDiccionario();
 			
 		//Se crea una lista de jugadores  
 		lJugadores = new ArrayList<Integrante>();
 		lJugadores.add(new Jugador());
 			
 		//Se crea un adminTurnos con la lista de jugadores
-		adminTurnos = new AdminTurnos(genMazo, genDic, lJugadores);
+		adminTurnos = new AdminTurnos(genMazo, lJugadores);
 	}
 		
 	/**

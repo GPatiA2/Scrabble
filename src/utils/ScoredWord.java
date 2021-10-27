@@ -1,16 +1,28 @@
 package utils;
 import org.json.JSONObject;
 
-import modelo.IMemento;
+
 import modelo.Memento;
 import modelo.Originator;
 
+/**
+ * Clase ScoredWord
+ * 
+ * Esta clase almacena la informacion sobre las
+ * palabras que han sido verificadas
+ * 
+ * @author Grupo 5
+ *
+ */
 public class ScoredWord implements Originator {
 	private String palabra;
 	private int puntos;
 	private Coordenadas coor_inicial;
 	private Coordenadas coor_final;
 	
+	/**
+	 * Constructor sin parametros de ScoredWord
+	 */
 	public ScoredWord() {
 		palabra = "";
 		puntos = 0;
@@ -18,6 +30,13 @@ public class ScoredWord implements Originator {
 		coor_final = new Coordenadas();
 	}
 	
+	/**
+	 * Constructor con parametros de ScoredWord
+	 * @param p palabra
+	 * @param punt puntos de la palabra
+	 * @param ini coordenadas iniciales de la palabra
+	 * @param fin coordenadas finales de la palabra
+	 */
 	public ScoredWord(String p, int punt, Coordenadas ini, Coordenadas fin) {
 		palabra = p;
 		puntos = punt;
@@ -25,6 +44,8 @@ public class ScoredWord implements Originator {
 		coor_final = fin;
 	}
 	
+	//--------------------METODOS AUXILIARES, GETTERS, SETTERS...------------------------
+
 	public int getPuntos() {
 		return puntos;
 	}
@@ -53,14 +74,16 @@ public class ScoredWord implements Originator {
 		if (o == this) return true;
 		
 		ScoredWord o1 = (ScoredWord) o;
-		if (palabra == o1.palabra && puntos == o1.puntos &&
-				coor_inicial == o1.coor_final && coor_final == o1.coor_final) {
+		if (palabra.equalsIgnoreCase(o1.palabra) && puntos == o1.puntos &&
+				coor_inicial.equals(o1.coor_inicial) && coor_final.equals(o1.coor_final)) {
 			return true;
 		}
 		else{
 			return false;
 		}
 	}
+
+	//--------------------METODOS DE LA INTERFAZ ORIGINATOR------------------------
 
 	@Override
 	public void setMemento(Memento m) {

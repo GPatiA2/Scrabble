@@ -11,7 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-import controlador.Registrador;
+import controlador.Controller;
 import modelo.Ficha;
 import modelo.Integrante;
 import modelo.JugadorObserver;
@@ -21,15 +21,18 @@ public class PanelMano extends JPanel implements JugadorObserver {
 
 	/*ATRIBUTOS */
 	
-	private Registrador c;
+	private static final long serialVersionUID = 1L;
+	
+	private Controller c;
 	private HashMap<Ficha,FichaView> mapaFichas;
+	private String jugador;
 	
 	/*CONSTRUCTO*/
 	
-	public PanelMano(Registrador c) {
+	public PanelMano(Controller c, String j) {
 		this.c = c;
 		mapaFichas = new HashMap<Ficha,FichaView>();
-		
+		jugador = j;
 		registerOn(c);
 		initGUI();
 	}
@@ -56,7 +59,6 @@ public class PanelMano extends JPanel implements JugadorObserver {
 		this.add(ficha);
 		this.mapaFichas.put(f, ficha);
 		updateUI();
-		System.out.println("ROBANDO");
 	}
 
 	
@@ -75,15 +77,20 @@ public class PanelMano extends JPanel implements JugadorObserver {
 	@Override
 	public void borrarFichaMano(Ficha f, Integrante j,boolean bienColocada) {
 		FichaView v= this.mapaFichas.get(f);
-		if(v!=null && bienColocada) this.remove(v);		
-		else if (v!=null && !bienColocada) v.setImagenLetra();
-		updateUI();
+		if(v!=null && bienColocada) {
+			this.remove(v);
+			this.mapaFichas.remove(f);
+		}
+		else if (v!=null && !bienColocada) {
+			v.setImagenLetra();
+		}
 		
+		updateUI();
 	}
 
 	@Override
-	public void registerOn(Registrador c) {
-		c.addJugadorObserver(this);
+	public void registerOn(Controller c) {
+		c.addJugadorObserver(this, jugador);
 	}
 
 

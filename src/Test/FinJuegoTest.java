@@ -1,7 +1,5 @@
 package Test;
 
-import static org.junit.Assert.*;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,8 +12,6 @@ import Command.ComandoPasarTurno;
 import Command.Command;
 import Excepciones.CommandExecuteException;
 import modelo.AdminTurnos;
-import modelo.Ficha;
-import modelo.GeneradorDiccionario;
 import modelo.GeneradorMazo;
 import modelo.Integrante;
 import modelo.Jugador;
@@ -29,7 +25,6 @@ public class FinJuegoTest {
 	@Before
 	public void init() throws IOException {
 		GeneradorMazo genMazo = new GeneradorMazo();
-		GeneradorDiccionario genDic = new GeneradorDiccionario();
 		
 		//Se crea una lista de jugadores  
 		lJugadores = new ArrayList<Integrante>();
@@ -39,7 +34,7 @@ public class FinJuegoTest {
 		}
 		
 		//Se crea un adminTurnos con la lista de jugadores
-		adminTurnos = new AdminTurnos(genMazo, genDic, lJugadores);
+		adminTurnos = new AdminTurnos(genMazo, lJugadores);
 	}
 
 	/**
@@ -59,8 +54,24 @@ public class FinJuegoTest {
 			c.execute(adminTurnos.getTablero(), adminTurnos.getMazo(), adminTurnos.getJugando());
 			adminTurnos.sigTurno();
 		}
-		
-	
 	}
-
+	
+	/**
+	 * Test para probar la regla del Scrabble por la cual se obtienen las puntuaciones finales
+	 * de los jugadores. Dicha regla es la siguiente:
+	 * 
+	 * Una vez finalizado el juego, la puntuacion de cada jugador se obtiene restando a su puntuacion 
+	 * el valor de las fichas que quedan en su atril.
+	 * 
+	 * Si un jugador ha usado todas las fichas de su atril entonces sumara a su puntuacion la suma del
+	 * valor de las fichas no jugadas de sus contrincantes.
+	 * 
+	 * @see /Documentos/Reglas.docx
+	 */
+	@Test
+	public void testPuntuacionFinal() {
+		
+	}
+	
+	
 }

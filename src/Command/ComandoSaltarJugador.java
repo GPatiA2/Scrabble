@@ -20,17 +20,13 @@ import modelo.Turno;
  */
 public class ComandoSaltarJugador extends Command {
 	/**
-	 * Informacion de ayuda sobre el comando saltar un jugador
-	 */
-	private static final String help = "Este comando permite que un jugador salte el turno del jugador siguiente a cambio de 3 monedas.";
-	/**
 	 * Coste en monedas que tiene saltar a un jugador
 	 */
 	private static final int coste = 3;
 	
 	
 	public ComandoSaltarJugador() {
-		super("jump", ProtocoloComunicacion.SALTAR_JUGADOR,"j", "jump", help);
+		super("jump", ProtocoloComunicacion.SALTAR_JUGADOR,"j");
 	}
 
 	

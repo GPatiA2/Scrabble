@@ -18,13 +18,9 @@ import modelo.Turno;
  *
  */
 public class ComandoPasarTurno extends Command {
-	/**
-	 * Informacion de ayuda sobre el comando invertir sentido
-	 */
-	private static final String help = "Este comando permite que un jugador pase de turno.";
 
 	public ComandoPasarTurno() {
-		super("pasar",ProtocoloComunicacion.PASAR_TURNO, "p", "Pasar de turno", help);
+		super("pasar",ProtocoloComunicacion.PASAR_TURNO, "p");
 	}
 
 	
@@ -54,7 +50,6 @@ public class ComandoPasarTurno extends Command {
 	public boolean execute(Tablero t, Mazo m, Integrante j) throws CommandExecuteException {
 		if(t.centroVacio()) {
 			System.out.println("CENTRO DISPONIBLE");
-			j.setTurnosPasados(1);
 			return true;
 		}
 		else {

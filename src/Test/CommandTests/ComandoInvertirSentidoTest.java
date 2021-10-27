@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 
 
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import Command.ComandoInvertirSentido;
 import Command.Command;
 import Excepciones.CommandExecuteException;
 import modelo.AdminTurnos;
-import modelo.GeneradorDiccionario;
 import modelo.GeneradorMazo;
 import modelo.Integrante;
 import modelo.Jugador;
@@ -49,7 +49,6 @@ public class ComandoInvertirSentidoTest {
 	@BeforeClass
 	static public void init() throws IOException {
 		GeneradorMazo genMazo = new GeneradorMazo();
-		GeneradorDiccionario genDic = new GeneradorDiccionario();
 			
 		lJugadores = new ArrayList<>();
 		for(int i = 0; i < numJugadores; ++i) {
@@ -58,7 +57,7 @@ public class ComandoInvertirSentidoTest {
 		}
 			
 		//Se crea un adminTurnos la lista de jugadores
-		adminTurnos = new AdminTurnos(genMazo, genDic, lJugadores);
+		adminTurnos = new AdminTurnos(genMazo, lJugadores);
 		turno = new Turno(adminTurnos.getJugando());
 	}
 	

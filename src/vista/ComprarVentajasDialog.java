@@ -5,13 +5,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
@@ -21,41 +17,38 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
-import Cliente.TraductorCliente;
 import Command.ComandoComprarComodin;
 import Command.ComandoInvertirSentido;
 import Command.ComandoSaltarJugador;
 import Excepciones.CommandExecuteException;
 import controlador.Controller;
-import controlador.Registrador;
 import modelo.Casilla;
 import modelo.Ficha;
 import modelo.Integrante;
 import modelo.JugadorObserver;
-import modelo.ModelObserver;
-import modelo.Tablero;
 import modelo.TableroObserver;
 import utils.Coordenadas;
 
 public class ComprarVentajasDialog extends JDialog implements ActionListener, TableroObserver, JugadorObserver {
 
+
+	private static final long serialVersionUID = 1L;
+	
 	private JComboBox<Ficha> fichas;
 	private DefaultComboBoxModel<Ficha> modeloFichas;
 	private JButton invertir;
 	private JButton jump;
 	private JButton comodin;
 	private boolean opcion;
-	private Registrador res;
+	private Controller res;
 	
-	public ComprarVentajasDialog(Registrador res) {
+	public ComprarVentajasDialog(Controller res) {
 		initGUI();
 		this.res = res;
 		registerOn(res);
@@ -174,7 +167,7 @@ public class ComprarVentajasDialog extends JDialog implements ActionListener, Ta
 			panel_comodin.setAlignmentY(CENTER_ALIGNMENT);
 			panel_comodin.setBorder(new LineBorder(Color.black));
 			
-			JTextArea text_comodin = new JTextArea("Comprar comdin: Esta ventaja te permite cambiar una de tus fichas por un comodin.");
+			JTextArea text_comodin = new JTextArea("Comprar comodin: Esta ventaja te permite cambiar una de tus fichas por un comodin.");
 			text_comodin.setLineWrap(true);
 			text_comodin.setPreferredSize(new Dimension(600, 50));
 			text_comodin.setWrapStyleWord(true);
@@ -216,6 +209,7 @@ public class ComprarVentajasDialog extends JDialog implements ActionListener, Ta
 		texto.setBackground(Color.getHSBColor(145, 81, 83));
 		texto.setAlignmentX(CENTER_ALIGNMENT);
 		texto.setAlignmentY(CENTER_ALIGNMENT);
+		texto.setEditable(false);
 		
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new FlowLayout());
@@ -272,6 +266,7 @@ public class ComprarVentajasDialog extends JDialog implements ActionListener, Ta
 		texto.setBackground(Color.getHSBColor(145, 81, 83));
 		texto.setAlignmentX(CENTER_ALIGNMENT);
 		texto.setAlignmentY(CENTER_ALIGNMENT);
+		texto.setEditable(false);
 		
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new FlowLayout());
@@ -329,6 +324,7 @@ public class ComprarVentajasDialog extends JDialog implements ActionListener, Ta
 		texto.setAlignmentX(CENTER_ALIGNMENT);
 		texto.setAlignmentY(CENTER_ALIGNMENT);
 		texto.setBackground(Color.getHSBColor(145, 81, 83));
+		texto.setEditable(false);
 		
 		//Anado la caja combo fichas
 		this.fichas.setPreferredSize(new Dimension(100,25));
@@ -407,7 +403,7 @@ public class ComprarVentajasDialog extends JDialog implements ActionListener, Ta
 	}
 
 	@Override
-	public void registerOn(Registrador c) {
+	public void registerOn(Controller c) {
 		c.addGameObserver(this);
 	}
 

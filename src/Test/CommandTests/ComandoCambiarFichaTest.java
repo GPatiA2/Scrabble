@@ -1,6 +1,7 @@
 package Test.CommandTests;
 
 import static org.junit.Assert.assertFalse;
+
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
@@ -16,7 +17,6 @@ import Command.Command;
 import Excepciones.CommandExecuteException;
 import modelo.AdminTurnos;
 import modelo.Ficha;
-import modelo.GeneradorDiccionario;
 import modelo.GeneradorMazo;
 import modelo.Integrante;
 import modelo.Jugador;
@@ -47,13 +47,12 @@ public class ComandoCambiarFichaTest {
 		j = new Jugador();
 		
 		GeneradorMazo genMazo = new GeneradorMazo();
-		GeneradorDiccionario genDic = new GeneradorDiccionario();
 			
 		List<Integrante> lJugadores = new ArrayList<Integrante>();
 		lJugadores.add(j);
 		
 		//Se crea un adminTurnos con la lista de jugadores para que rellene la mano del jugador
-		adminTurnos = new AdminTurnos(genMazo, genDic, lJugadores);
+		adminTurnos = new AdminTurnos(genMazo, lJugadores);
 		turno = new Turno(j);
 		
 	}

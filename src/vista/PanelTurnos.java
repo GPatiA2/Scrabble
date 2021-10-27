@@ -11,10 +11,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-import controlador.Registrador;
 
 public class PanelTurnos extends JPanel {
 
+
+	private static final long serialVersionUID = 1L;
+	
 	private JLabel turnoActlb;
 	private JLabel turnoSiglb;
 	private JLabel turnoAct;

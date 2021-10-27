@@ -18,23 +18,23 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import Cliente.TraductorCliente;
+
 import Command.ComandoColocarFicha;
 import Command.Command;
-import Command.CommandGenerator;
 import Excepciones.CommandExecuteException;
 import controlador.Controller;
-import controlador.Registrador;
 import modelo.Ficha;
 import utils.Coordenadas;
 
 public class FichaView extends JLabel implements MouseListener{
 	
+	private static final long serialVersionUID = 1L;
+	
 	private Image img;
 	private Ficha ficha;
-	private Registrador c;
+	private Controller c;
 
-	public FichaView(Registrador c,Ficha f) {
+	public FichaView(Controller c,Ficha f) {
 		/*Imagen de fondo*/
 		this.setMinimumSize(new Dimension(50,50));
 		this.setPreferredSize(new Dimension(50,50));
@@ -105,39 +105,40 @@ public class FichaView extends JLabel implements MouseListener{
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		setCursor(Cursor.getDefaultCursor());
-		
-		
-
-		Command command;
-		String comodin = "0";
-		String id = ficha.getId();
-		if(ficha.esComodin()) {
-			do{
-				comodin = JOptionPane.showInputDialog("Que letra desea colocar?");
+		if(GamePanel.getEnable()) {
+			setCursor(Cursor.getDefaultCursor());
+			
+			
+	
+			Command command;
+			String comodin = "0";
+			String id = ficha.getId();
+			if(ficha.esComodin()) {
+				do{
+					comodin = JOptionPane.showInputDialog("Que letra desea colocar?");
+					
+				}while(comodin.isEmpty()||comodin.length()>1|| comodin.equals(" ")|| isNumeric(comodin));
 				
-			}while(comodin.isEmpty()||comodin.length()>1|| comodin.equals(" ")|| isNumeric(comodin));
+				//Pido la letra mientras que sea la entrada vacia, un espacio, varias letras
+				//o sea un numero
+				
+				comodin = comodin.toUpperCase().trim();
+				id = "*";
+				
+			}
+			Coordenadas c= MainWindow.getCoordenadas(e.getXOnScreen(),e.getYOnScreen());
 			
-			//Pido la letra mientras que sea la entrada vacia, un espacio, varias letras
-			//o sea un numero
-			
-			comodin = comodin.toUpperCase().trim();
-			id = "*";
-			
+			if (Coordenadas.checkCommand(c.getFila()+1, c.getColumna()+1)) {
+				command = new ComandoColocarFicha(id,c.getFila()+1,c.getColumna()+1,comodin.charAt(0));
+				try {
+					this.c.runCommand(command);
+				} catch (FileNotFoundException | CommandExecuteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}	
+			}
+			else this.setImagenLetra();
 		}
-		Coordenadas c= MainWindow.getCoordenadas(e.getXOnScreen(),e.getYOnScreen());
-		
-		if (Coordenadas.checkCommand(c.getFila()+1, c.getColumna()+1)) {
-			command = new ComandoColocarFicha(id,c.getFila()+1,c.getColumna()+1,comodin.charAt(0));
-			try {
-				this.c.runCommand(command);
-			} catch (FileNotFoundException | CommandExecuteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}	
-		}
-		else this.setImagenLetra();
-		
 	}
 	public static boolean isNumeric(String str)	{
 		

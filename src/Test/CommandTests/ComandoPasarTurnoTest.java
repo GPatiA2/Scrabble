@@ -2,6 +2,7 @@ package Test.CommandTests;
 
 import static org.junit.Assert.assertEquals;
 
+
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -17,7 +18,6 @@ import Command.ComandoPasarTurno;
 import Command.Command;
 import Excepciones.CommandExecuteException;
 import modelo.AdminTurnos;
-import modelo.GeneradorDiccionario;
 import modelo.GeneradorMazo;
 import modelo.Integrante;
 import modelo.Jugador;
@@ -54,7 +54,6 @@ public class ComandoPasarTurnoTest {
 	@BeforeClass
 	static public void init() throws IOException {
 		GeneradorMazo genMazo = new GeneradorMazo();
-		GeneradorDiccionario genDic = new GeneradorDiccionario();
 		
 		lJugadores = new ArrayList<>();
 		for(int i = 0; i < numJugadores; ++i) {
@@ -63,7 +62,7 @@ public class ComandoPasarTurnoTest {
 		}
 		
 		//Se crea un adminTurnos con el game y la lista de jugadores
-		adminTurnos = new AdminTurnos(genMazo, genDic, lJugadores);
+		adminTurnos = new AdminTurnos(genMazo, lJugadores);
 	}
 	
 	/**

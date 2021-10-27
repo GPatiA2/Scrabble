@@ -12,6 +12,8 @@ import javax.swing.border.Border;
 
 public class PanelJugadorActual extends JPanel {
 	
+	private static final long serialVersionUID = 1L;
+	
 	private JLabel nick;
 	private JLabel nickArea;
 	
@@ -102,7 +104,6 @@ public class PanelJugadorActual extends JPanel {
 
 	}
 	
-
 	public void mostrarPuntos(int puntos, String nick) {
 		this.puntuacionArea.setText("" + puntos);
 		this.nickArea.setText(nick);
@@ -114,7 +115,6 @@ public class PanelJugadorActual extends JPanel {
 		updateUI();
 	}
 	public String getNick() {
-		
 		return this.nickArea.getText();
 	}
 }

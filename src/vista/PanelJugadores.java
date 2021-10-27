@@ -4,7 +4,7 @@ import java.awt.GridLayout;
 import java.util.List;
 
 import javax.swing.JPanel;
-import controlador.Registrador;
+import controlador.Controller;
 import modelo.Ficha;
 import modelo.Integrante;
 import modelo.JugadorObserver;
@@ -13,12 +13,15 @@ import modelo.TManagerObserver;
 
 public class PanelJugadores extends JPanel implements TManagerObserver,JugadorObserver {
 
-	private Registrador c;
+
+	private static final long serialVersionUID = 1L;
+
+	private Controller c;
 	
 	private PanelTurnos panelTurnos;
 	private PanelJugadorActual panelJugadorActual;
 	
-	public PanelJugadores(Registrador c) {
+	public PanelJugadores(Controller c) {
 		this.c = c;
 		initPanel();
 		registerOn(this.c);
@@ -49,32 +52,35 @@ public class PanelJugadores extends JPanel implements TManagerObserver,JugadorOb
 	}
 
 	@Override
-	public void registerOn(Registrador c) {
+	public void registerOn(Controller c) {
 		c.addTManagerObserver(this);
-		c.addJugadorObserver(this);
+		c.addJugadorObserver(this, panelTurnos.getActual());
 	}
 
 	@Override
 	public void nuevoTurno(Integrante i, String act, String sig) {
-		// TODO Auto-generated method stub
-		
 		panelTurnos.setText(act, sig);
 		panelJugadorActual.mostrarMonedas(i.getCoin());
 		panelJugadorActual.mostrarPuntos(i.getScore(), i.getNick());
+		if(i.getNick().equals(act)) {
+			GamePanel.setEnableGame(true);
 		
+		}
+		else {
+			GamePanel.setEnableGame(false);
+		}
 	}
 
 	@Override
 	public void onError(String err,String nick) {}
 
 	@Override
-	public void onRegister(String act, String sig) {
-		// TODO Auto-generated method stub		
+	public void onRegister(String act, String sig) {			
 		panelTurnos.setText(act, sig);
 	}
 
 	@Override
-	public void turnoAcabado() {
+	public void turnoAcabado(String j) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -99,7 +105,6 @@ public class PanelJugadores extends JPanel implements TManagerObserver,JugadorOb
 
 	@Override
 	public void mostrarPuntos(int puntos, String nick) {
-		
 		this.panelJugadorActual.mostrarPuntos(puntos, nick);
 	}
 
@@ -115,11 +120,19 @@ public class PanelJugadores extends JPanel implements TManagerObserver,JugadorOb
 		this.panelJugadorActual.mostrarMonedas(monedas);
 		if(nick.equals(this.panelTurnos.getActual())) {
 			GamePanel.setEnableGame(true);
-		
 		}
 		else {
 			GamePanel.setEnableGame(false);
 		}
 	}
 
+	@Override
+	public void partidaAcabada(String nick) {
+		
+	}
+
+	public String getAct() {
+		return panelTurnos.getActual();
+	}
+	
 }

@@ -6,37 +6,31 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
+
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 import controlador.Controller;
-import controlador.Registrador;
 import modelo.Casilla;
 import modelo.Ficha;
-import modelo.Integrante;
-import modelo.Jugador;
-import modelo.ModelObserver;
-import modelo.Tablero;
 import modelo.TableroObserver;
 import utils.Coordenadas;
 
 public class PanelTablero extends JPanel implements TableroObserver {
+
+	private static final long serialVersionUID = 1L;
 	
-	private Registrador ctrl;
+	private Controller ctrl;
 	private HashMap<Coordenadas,JPanel> tab;
 	private HashMap<JPanel,Coordenadas> tab2;
 	private static final int nFilas = 15;
 	private static final int nCols = 15;
 	
-	public PanelTablero(Registrador c) {
+	public PanelTablero(Controller c) {
 		ctrl = c;
 		tab = new HashMap<Coordenadas,JPanel>();
 		tab2 = new  HashMap<JPanel,Coordenadas>();
@@ -59,27 +53,22 @@ public class PanelTablero extends JPanel implements TableroObserver {
 				if (i == j || j == nCols - i - 1) {
 					//Esquinas Triple Palabra
 					if (i == 0 || i == 14) {
-						System.out.println("Casilla Roja");
 						cell.add(new CeldaTablero(ctrl, new Casilla(Casilla.CASILLA_TRIPLE_PALABRA), coord), BorderLayout.CENTER);
 					}
 					//Casilla Triple Letra
 					else if ( i == 5 || i == 9) {
-						System.out.println("Casilla Naranja");
 						cell.add(new CeldaTablero(ctrl,  new Casilla(Casilla.CASILLA_TRIPLE_LETRA), coord), BorderLayout.CENTER);
 					}
 					//Casilla Doble Letra
 					else if (i == 6 || i == 8) {
-						System.out.println("Casilla Azul");
 						cell.add(new CeldaTablero(ctrl, new Casilla(Casilla.CASILLA_DOBLE_LETRA),coord), BorderLayout.CENTER);
 					}
 					//Si no es la casilla central Doble Palabra
 					else if (i != 7) {
-						System.out.println("Casilla Morada");
 						cell.add(new CeldaTablero(ctrl, new Casilla(Casilla.CASILLA_DOBLE_PALABRA), coord), BorderLayout.CENTER);
 					}
 					//Casilla central. La ponemos como normal
 					else {
-						System.out.println("Casilla Normal");
 						cell.add(new CeldaTablero(ctrl,  new Casilla(Casilla.CASILLA_NORMAL), coord), BorderLayout.CENTER);
 					}
 				}
@@ -156,7 +145,7 @@ public class PanelTablero extends JPanel implements TableroObserver {
 	}
 	
 	@Override
-	public void registerOn(Registrador c) {
+	public void registerOn(Controller c) {
 		c.addGameObserver(this);
 	}
 

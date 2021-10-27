@@ -21,10 +21,6 @@ import modelo.Turno;
  */
 public class ComandoComprarComodin extends Command{
 	/**
-	 * Informacion de ayuda sobre el comando comprar un comodin
-	 */
-	private static final String help = "Este comando permite comprar un comodin a cambio de 5 monedas descartando una ficha.";
-	/**
 	 * Ficha descartada
 	 */
 	private char id_ficha;
@@ -34,7 +30,7 @@ public class ComandoComprarComodin extends Command{
 	private static final int coste = 5;
 	
 	public ComandoComprarComodin(char id_ficha) {
-		super("comodin",ProtocoloComunicacion.COMPRAR_COMODIN, "cc", "comodin <letra>", help);
+		super("comodin",ProtocoloComunicacion.COMPRAR_COMODIN, "cc");
 		this.id_ficha = id_ficha;
 	}
 	
@@ -65,7 +61,7 @@ public class ComandoComprarComodin extends Command{
 			j.gastarMonedas(coste); 
 			Ficha f = j.eliminarFicha(id_ficha);
 			f = new Ficha('*', 0);
-			j.anadirFicha(f);
+			j.robar(f);
 			return true;
 		}
 		catch(Exception e) {

@@ -21,9 +21,7 @@ public abstract class CommandGenerator extends Command{
 			new ComandoColocarFicha("",0,0,'0'),
 			new ComandoQuitarFicha(0,0),
 			new ComandoSalida(), 
-			new ComandoAyuda(), 
 			new ComandoPasarTurno(),
-			new ComandoInstrucciones(),
 			new ComandoCambiarFicha('.'),
 			new ComandoSaltarJugador(), 
 			new ComandoComprarComodin('.'),
@@ -37,8 +35,8 @@ public abstract class CommandGenerator extends Command{
 	 * @param detalles
 	 * @param help
 	 */
-	public CommandGenerator(String nombre, String shortcut, String detalles, String help ) {
-		super(nombre, "",shortcut,detalles, help);
+	public CommandGenerator(String nombre, String shortcut) {
+		super(nombre, "",shortcut);
 	}
 	
 	/**
@@ -62,19 +60,5 @@ public abstract class CommandGenerator extends Command{
 		else {
 			throw new CommandParseException("Debes introducir un comando valido, prueba help para ver los comandos disponibles");
 		}
-	}
-	
-	/**
-	 * Devuelve la informacion de ayuda de todos los comandos
-	 * @return string 
-	 */
-	public static String comandoAyuda() {
-		int i =0; 
-		String text = "";
-		while(i<listaCommandos.length) {
-			text += CommandGenerator.listaCommandos[i].Ayuda() + "\n" + "\n";
-			i++;
-		}
-		return text;
 	}
 }

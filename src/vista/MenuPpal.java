@@ -1,8 +1,6 @@
 package vista;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Font;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -13,7 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -25,16 +22,12 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import Cliente.Cliente;
 import Cliente.EstadoCliente;
-import Cliente.TraductorCliente;
 import Servidor.Servidor;
-import controlador.Controller;
-import controlador.Registrador;
-import javafx.stage.FileChooser;
+import controlador.ControllerLocal;
 import modelo.Integrante;
 import modelo.Jugador;
 import modelo.Maquina;
@@ -43,6 +36,10 @@ import modelo.Scrabble;
 
 
 public class MenuPpal extends JFrame {
+	
+	public static final int ALTURAMENU= 600;
+	public static final int ANCHOMENU = 400;
+	private static final long serialVersionUID = 1L;
 	
 	private Image fondo;
 	
@@ -60,6 +57,7 @@ public class MenuPpal extends JFrame {
 	
 	
 	public void initGUI (){
+		this.setLocationRelativeTo(null);
 		JButton localGame,netPlayHost,joinNetPlay,loadGame, salir;
 		
 		JPanel mainPanel = new JPanel() {
@@ -69,6 +67,7 @@ public class MenuPpal extends JFrame {
 				g.drawImage(fondo,0,0, this);
 			}
 		}; // Creo mi panel principal
+		
 		mainPanel.setLayout(new BorderLayout());
 		JPanel panelCentral = new JPanel();
 		panelCentral.setOpaque(false);
@@ -77,6 +76,7 @@ public class MenuPpal extends JFrame {
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setOpaque(false);
 		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.PAGE_AXIS));
+		
 		//NEWGAME
 		
 		localGame = creaBoton ("PARTIDA LOCAL");
@@ -88,7 +88,7 @@ public class MenuPpal extends JFrame {
 				Scrabble sc = null;
 				try {
 					sc = new Scrabble(lj);
-					Controller c = new Controller (sc);
+					ControllerLocal c = new ControllerLocal (sc);
 					//Esto esta aqui de momento, si queremos jugar por consola tenemos que diseñar una vista
 					//  que use los toString, no es dificil
 					MainWindow mw = new MainWindow (c);
@@ -114,7 +114,7 @@ public class MenuPpal extends JFrame {
 				Servidor s = new Servidor();
 				new Thread() {
 					public void run() {
-						Cliente.main(null);
+						new Cliente("localhost", 5000);
 					}
 				}.start();
 				dispose();
@@ -132,7 +132,7 @@ public class MenuPpal extends JFrame {
 				// TODO Auto-generated method stub
 				new Thread() {
 					public void run() {
-						Cliente.main(null);
+						new Cliente("localhost", 5000);
 					}
 				}.start();
 				dispose();
@@ -144,13 +144,14 @@ public class MenuPpal extends JFrame {
 		
 		
 		//LOADGAME
+		
 		loadGame = creaBoton ("CARGAR PARTIDA");
 		loadGame.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-					JFileChooser fc = new JFileChooser();
+					JFileChooser fc = new JFileChooser(new File("Saves"));
 					int sel = fc.showOpenDialog(mainPanel);
 					if(sel == JFileChooser.APPROVE_OPTION) {
 						File f = fc.getSelectedFile();
@@ -159,7 +160,7 @@ public class MenuPpal extends JFrame {
 						Scrabble sc;
 						try {
 							sc = new Scrabble(j);
-							Controller ctrl = new Controller(sc);
+							ControllerLocal ctrl = new ControllerLocal(sc);
 							ctrl.load(f);
 							SwingUtilities.invokeLater(new Runnable() {
 
@@ -186,6 +187,7 @@ public class MenuPpal extends JFrame {
 		
 		
 		//SALIR
+		
 		salir = creaBoton ("SALIR");
 		salir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -201,61 +203,44 @@ public class MenuPpal extends JFrame {
 		mainPanel.add(panelCentral, BorderLayout.CENTER);
 		this.getContentPane().add(mainPanel);
 		mainPanel.setVisible(true);
-		//
-		
 		
 		// Barras adcionales
 		JMenuBar menuBarra = new JMenuBar();
 		this.setJMenuBar(menuBarra);
 		
-		JMenu file = new JMenu ("Options"); // Opcion principal
+		JMenu file = new JMenu ("Opciones"); // Opcion principal
 		menuBarra.add(file);
 											//Subopciones
-		JMenuItem info = new JMenuItem ("Info_Juego");
+		JMenuItem info = new JMenuItem ("Instrucciones");
 		file.add(info);
-		JMenuItem Leader = new JMenuItem ("Leaderboard");
-		file.add(Leader);
+		JMenuItem Command = new JMenuItem ("Comandos");
+		file.add(Command);
 		//
 		
-		class cargar implements ActionListener {
-			public void actionPerformed(ActionEvent e) {
-					JOptionPane.showMessageDialog(null, "ESTE BOTON  DE CARGA FUNCIONA");
-					mainPanel.setVisible(false);
-				
-			}
-		}
-
 		class instruccion implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-					JOptionPane.showMessageDialog(null, "LE MOSTRAMOS LAS INSTRUCCIONES");
 					Info_juego info = new Info_juego ("");
 			}
 		}
+		class comando implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+					Comandos comand = new Comandos ("");
+			}
+		}
 
-		this.pack();
-//		this.setLocationRelativeTo(null);
+		info.addActionListener(new instruccion());
+		Command.addActionListener(new comando());
+		
+		this.setSize(ANCHOMENU, ALTURAMENU);
+		this.setMinimumSize(new Dimension(ANCHOMENU, ALTURAMENU));
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	}
-	    ///////
-
-	
-	
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MenuPpal frame = new MenuPpal();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 	
 	List<Integrante> cargarJugadores (){
 		Tabla t = new Tabla(this);
+		t.setLocationRelativeTo(this);
 		t.setVisible(true);
 		List <Integrante> l = t.getList();
 		String[] possibilities = {"EASY", "MEDIUM", "HARD"};
@@ -282,7 +267,12 @@ public class MenuPpal extends JFrame {
 			}
 		}
 		for(int i = 0; i < maquinas; i++) {
-			l.add(new Maquina());
+			try {
+				l.add(new Maquina(n, i));
+			} catch (Exception e) {
+				//Esta excepcion no deberia darse ahora que no se escribe por consola
+				e.printStackTrace();
+			}
 		}
 		
 		return l;

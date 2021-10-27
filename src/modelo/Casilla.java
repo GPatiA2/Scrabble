@@ -2,41 +2,80 @@ package modelo;
 
 import org.json.JSONObject;
 
-/* Esta clase se utilizar� en futuros splints para derivar de ella las diferentes casillas que existen en el juego asi como las 
- * que consideremos meter
+/**
+ * Clase Casilla
+ * 
+ * Contiene la informacion de cada casilla
+ * (tipo de casilla, si esta vacia...)
+ * 
+ * @author Grupo 5
+ *
  */
-
 public class Casilla implements Originator{
+	/**
+	 * Tipos de casillas
+	 */
 	public static final int CASILLA_NORMAL = 1;
 	public static final int CASILLA_DOBLE_LETRA = 2;
 	public static final int CASILLA_TRIPLE_LETRA = 3;
 	public static final int CASILLA_DOBLE_PALABRA = 4;
 	public static final int CASILLA_TRIPLE_PALABRA = 5;
 	
-	
-	private Ficha ficha;	
-	//Este boolean se actualiza a cada ficha que se pone o quita para las casillas afectadas
-	//Indica si puedo poner o no una ficha en esta casilla
+	/**
+	 * Ficha sobre la casilla
+	 */
+	private Ficha ficha;
+	/**
+	 * Indica si se puede poner o no una ficha en la casilla.
+	 * Se actualiza con cada ficha que se pone o se quita de la casilla.
+	 */
 	private boolean disponible;
-	
+	/**
+	 * Multiplicador de la puntuacion de la ficha puesta sobre la casilla
+	 * para obtener la puntuacion de una palabra.
+	 * 
+	 * @see Documentos/Reglas.docx
+	 */
 	private int multiplicador; 
 	
-	public Casilla(int puntos){ //constructor vacio por si es una casilla vacia;
+	/**
+	 * Constructor para una casilla sin ficha
+	 * @param multiplicador de la casilla
+	 */
+	public Casilla(int multiplicador){ 
 		this.ficha = null;
 		disponible = false;
-		this.multiplicador = puntos;
+		this.multiplicador = multiplicador;
 	}
-	public Casilla(Ficha f,int puntos){
+	/**
+	 * Constructor para una casilla con ficha
+	 * @param f ficha sobre la casilla
+	 * @param multiplicador de la casilla
+	 */
+	public Casilla(Ficha f,int multiplicador){
 		this.ficha = f;
-		this.multiplicador = puntos;
+		this.multiplicador = multiplicador;
 	}
+	
+	public String to_string() {
+		if(this.ficha != null) {
+			return this.ficha.toString() + " "+this.multiplicador;
+		}
+		else {
+			return "" +this.multiplicador;
+		}
+	}
+	
+	//--------------------METODOS AUXILIARES, GETTERS, SETTERS...------------------------
+
 	public int getMultiplicador(){
 		return this.multiplicador;
 	}
+	
 	public void setMultiplicador(int m) {
 		multiplicador = m;
 	}
-	
+
 	public void setDisponible(boolean b) {
 		disponible = b;
 	}
@@ -61,27 +100,22 @@ public class Casilla implements Originator{
 		return ficha;
 	}
 	
-	public String to_string() {
-		if(this.ficha != null) {
-			return this.ficha.toString() + " "+this.multiplicador;
-		}
-		else {
-			return "" +this.multiplicador;
-		}
-	}
-	
 	void remove() {
 		this.ficha = null;
 	}
 	
+	//--------------------METODOS DE LA INTERFAZ ORIGINATOR------------------------
+
 	@Override
 	public void setMemento(Memento m) {
 		disponible = m.getState().getBoolean("disponible");
-		multiplicador = m.getState().getInt("multiplicador");
-		Memento mementoFicha = new Memento();
-		mementoFicha.setState(m.getState().getJSONObject("ficha"));
-		this.ficha = new Ficha();
-		ficha.setMemento(mementoFicha);	
+		
+		if(m.getState().has("ficha")) {			
+			Memento mementoFicha = new Memento();
+			mementoFicha.setState(m.getState().getJSONObject("ficha"));
+			this.ficha = new Ficha();
+			ficha.setMemento(mementoFicha);	
+		}
 	}
 
 	@Override
@@ -89,9 +123,11 @@ public class Casilla implements Originator{
 		Memento memento = new Memento();
 		JSONObject jsonCasilla = new JSONObject();
 		
-		jsonCasilla.put("multiplicador", this.multiplicador);
 		jsonCasilla.put("disponible", this.disponible);
-		jsonCasilla.put("ficha", this.ficha.createMemento().getState());
+		
+		if(this.ficha != null) {
+			jsonCasilla.put("ficha", this.ficha.createMemento().getState());			
+		}
 		
 		memento.setState(jsonCasilla);
 		

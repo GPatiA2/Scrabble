@@ -12,12 +12,10 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 import modelo.Integrante;
@@ -26,21 +24,16 @@ import modelo.Jugador;
 
 public class Tabla extends JDialog {
 	
-	/**
-	 * 
-	 */
-	
+
 	private JTable table;
 	private DefaultTableModel dtm;
 	private static final long serialVersionUID = 1L;
-	private boolean comprobar;
 	private List <Integrante> lista;
 	
 	public Tabla(Frame Owner) {
 		super (Owner,true);
 		
 		lista = new ArrayList <Integrante>();
-		comprobar = false;
 		
 		JPanel panel = new JPanel ();
 		panel.setLayout(new BoxLayout(panel,BoxLayout.LINE_AXIS));
@@ -55,8 +48,6 @@ public class Tabla extends JDialog {
 		
 		// se crea la Tabla con el modelo DefaultTableModel
 		table = new JTable(dtm);
-		
-	
 		
 		
 		// Inserto las columnas
@@ -97,7 +88,6 @@ public class Tabla extends JDialog {
 		class guarda implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 					//Añadir la funcionalidad de listJugadores
-					comprobar = true;
 					generaLista();
 					panel.setVisible(false);
 					dispose();
@@ -108,6 +98,7 @@ public class Tabla extends JDialog {
 				int i = 0;
 				while (i < dtm.getRowCount()) {
 					lista.add(new Jugador((String) dtm.getValueAt(i , 1)));
+					System.out.println("NICK " + (String) dtm.getValueAt(i , 1));
 					i++;
 				}
 			}
@@ -122,8 +113,6 @@ public class Tabla extends JDialog {
 					if (dtm.getRowCount() < 4) {
 						dtm.addRow(row);
 						dtm.fireTableRowsInserted(r, dtm.getRowCount()- 1);
-						String n = (String) dtm.getValueAt(dtm.getRowCount()-1, 1);
-						lista.add(new Jugador(n));
 					}
 					else {
 						JOptionPane.showMessageDialog(null, "NO  PUEDE AÑADIR MAS DE 4 JUGADORES","ERROR", JOptionPane.ERROR_MESSAGE);
@@ -142,7 +131,6 @@ public class Tabla extends JDialog {
 					if (dtm.getRowCount() != 1) {
 						dtm.removeRow(r);
 						dtm.fireTableRowsDeleted(r, r);
-						lista.remove(lista.size()-1);
 					}
 					else {
 						JOptionPane.showMessageDialog(null, "NO SE PUEDEN ELIMINAR MAS JUGADORES","ERROR", JOptionPane.ERROR_MESSAGE);
@@ -174,7 +162,6 @@ public class Tabla extends JDialog {
 		}
 
 	public List<Integrante> getList() {
-		// TODO Auto-generated method stub
 		return lista;
 	}
 }

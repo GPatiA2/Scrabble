@@ -1,20 +1,28 @@
-package modelo.Diccionario;
+package modelo.diccionario;
+
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
+/**
+ * Clase Diccionario
+ * 
+ * Esta clase es la encargada de implementar el
+ * diccionario del juego, el cual se toma como referencia
+ * a la hora de verificar las palabras que se colocan
+ * sobre el tablero
+ * 
+ * @author Grupo 5
+ *
+ */
 public class Diccionario {
 
 	 /** 
@@ -165,9 +173,7 @@ public class Diccionario {
 		
 		boolean[] marcador = {false, false, false, false, false, false, false, false};
 
-		if (!primera) {
-			this.backTrack(lista_letras, this.raiz, "", primera, 0, lista, marcador, pivote);
-		}
+		this.backTrack(lista_letras, this.raiz, "", primera, 0, lista, marcador, pivote);
 		
 		return lista;
 	}
@@ -248,8 +254,7 @@ public class Diccionario {
 		return false;
 	}
 	
-	/**
-	 * Comprueba si el diccionario contiene la palabra
+	 /** Comprueba si el diccionario contiene la palabra
 	 * @param palabra
 	 * @return
 	 */

@@ -1,12 +1,18 @@
 
 Cliente
 Command
+CommandClient
+CommandLobby
 Excepciones
 Servidor
+Servidor.Interprete
+Servidor.InterpreterFactoria
 Test
 Test.CommandTests
 Test.GeneradoresTests
 controlador
 modelo
+modelo.Estrategias
+modelo.diccionario
 utils
 vista

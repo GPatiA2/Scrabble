@@ -11,13 +11,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
-import controlador.Registrador;
+import controlador.Controller;
 
 public class GuardarBoton extends JButton implements MouseListener{
 
-	private Registrador c;
+	private static final long serialVersionUID = 1L;
 	
-	public GuardarBoton(Registrador c) {
+	private Controller c;
+	
+	public GuardarBoton(Controller c) {
 		this.c = c;
 		initGUI();
 	}

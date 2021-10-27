@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -8,10 +9,18 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import Excepciones.CommandExecuteException;
-import javafx.util.Pair;
 import utils.Coordenadas;
-import utils.MyStringUtils;
 
+/**
+ * Clase Tablero
+ * 
+ * Esta clase implementa el tablero del juego en el que los 
+ * integrantes de la partida colocan fichas y contiene operaciones 
+ * basicas para interactuar con el mismo.
+ * 
+ * @author Grupo
+ *
+ */
 public class Tablero implements Originator, Observable<TableroObserver>{
 
 	/**
@@ -25,7 +34,6 @@ public class Tablero implements Originator, Observable<TableroObserver>{
 	private static final int nFilas = 15;
 	private static final int nCols = 15;
 	private List<List<Casilla>> grid;
-	private String[][] tab;
 	
 	private List<TableroObserver> observadores;
 	
@@ -47,7 +55,6 @@ public class Tablero implements Originator, Observable<TableroObserver>{
 		for(int i = 0; i < nFilas; i++) {
 			grid.add(new ArrayList<Casilla>(nCols));
 			for(int j = 0; j < nCols; j++) {
-				Coordenadas coord = new Coordenadas(i,j);
 				//Diagonales
 				if (i == j || j == nCols - i - 1) {
 					//Esquinas Triple Palabra
@@ -125,7 +132,6 @@ public class Tablero implements Originator, Observable<TableroObserver>{
 		}
 		center = grid.get(nFilas/2).get(nCols/2);
 		center.setDisponible(true);
-		tab = new String[nFilas][nCols];
 	}
 	
 	//--------------------METODOS PARA LAS OPERACIONES DEL TABLERO------------------------
@@ -192,7 +198,6 @@ public class Tablero implements Originator, Observable<TableroObserver>{
 	 */
 	public void actDisponibles(int cX, int cY) {
 		
-		Casilla act = grid.get(cX).get(cY);
 		
 		//Primero se calcula la disponibilidad de la casilla dada y se notifica a los observers
 		calcDisponibles(cX,cY);
@@ -260,52 +265,6 @@ public class Tablero implements Originator, Observable<TableroObserver>{
 	
 	//--------------------METODOS PARA VISUALIZAR EL TABLERO------------------------------
 
-	/**
-	 * Permite visualizar el tablero por consola
-	 */
-	public String toString() {
-		encodeBoard();
-		
-		int cellSize = 7;
-		int marginSize = 2;
-		String vDelimiter = "|";
-		String hDelimiter = "-";
-		String intersect = space;
-		String vIntersect = space;
-		String hIntersect = "-";
-		String corner = space;
-		
-		String cellDelimiter = MyStringUtils.repeat(hDelimiter, cellSize);
-		
-		String rowDelimiter = vIntersect + MyStringUtils.repeat(cellDelimiter + intersect, nCols-1) + cellDelimiter + vIntersect;
-		String hEdge =  corner + MyStringUtils.repeat(cellDelimiter + hIntersect, nCols-1) + cellDelimiter + corner;
-		
-		String margin = MyStringUtils.repeat(space, marginSize);
-		String lineEdge = String.format("%n%s%s%n", margin, hEdge);
-		String lineDelimiter = String.format("%n%s%s%n", margin, rowDelimiter);
-		
-		StringBuilder str = new StringBuilder();
-		
-		str.append(lineEdge);
-		for(int i=0; i<nFilas; i++) {
-				str.append(margin).append(vDelimiter);
-				for (int j=0; j<nCols; j++)
-					str.append( MyStringUtils.centre(tab[i][j], cellSize)).append(vDelimiter);
-				if (i != nFilas - 1) str.append(lineDelimiter);
-				else str.append(lineEdge);	
-		}
-		
-		return str.toString();
-	}
-
-	private void encodeBoard() {
-		for(int i = 0; i < nFilas; i++) {
-			for(int j = 0; j < nCols; j++) {
-				tab[i][j] = grid.get(i).get(j).to_string(); 
-			}
-		}
-	}
-	
 	public boolean emptyCasilla(int coordX, int coordY) {
 		//devuelve si la casilla en la posicion CoorX, CoorY esta vacia
 		return grid.get(coordX).get(coordY).empty();
@@ -343,8 +302,8 @@ public class Tablero implements Originator, Observable<TableroObserver>{
 			for(int j = 0; j < nCols; j++) {
 				JSONObject jsonCasilla = new JSONObject();
 				
-				if(!this.grid.get(i).get(j).empty()) {
-					jsonCasilla = this.grid.get(i).get(j).createMemento().getState();
+				jsonCasilla = this.grid.get(i).get(j).createMemento().getState();
+				if(!this.grid.get(i).get(j).empty() || this.grid.get(i).get(j).esDisponible()) {
 					jsonCasilla.put("fila", i);
 					jsonCasilla.put("columna", j);
 					jsonArrayGrid.put(jsonCasilla);
@@ -385,7 +344,7 @@ public class Tablero implements Originator, Observable<TableroObserver>{
 	 * @return b true si la casilla central esta disponible y vacia
 	 */
 	public boolean centroDisponible() {
-		return center.esDisponible() && !center.empty();
+		return center.esDisponible() && center.empty();
 	}
 	
 	/**

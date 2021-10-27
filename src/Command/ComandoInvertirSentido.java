@@ -21,16 +21,12 @@ import modelo.Turno;
  */
 public class ComandoInvertirSentido extends Command{
 	/**
-	 * Informacion de ayuda sobre el comando invertir sentido
-	 */
-	private static final String help = "Este comando permite invertir el orden de los turnos a cambio de 5 monedas.";
-	/**
 	 * Coste en monedas que tiene invertir el sentido
 	 */
 	private static final int coste = 5;
 	
 	public ComandoInvertirSentido() {
-		super("invertir", ProtocoloComunicacion.INVERTIR_SERNTIDO,"is", "invertir", help);
+		super("invertir", ProtocoloComunicacion.INVERTIR_SERNTIDO,"is");
 	}
 	
 	@Override

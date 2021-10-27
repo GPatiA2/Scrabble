@@ -7,13 +7,16 @@ import java.util.List;
 
 import Command.Command;
 import Excepciones.CommandExecuteException;
-
+/**
+ * Esta clase hace de fachada para el modelo frente a cualquier agente exterior
+ *
+ */
 public class Scrabble {
 
 	private AdminTurnos tManager;
 	
 	public Scrabble(List<Integrante> jugadores) throws IOException {
-		this.tManager = new AdminTurnos(new GeneradorMazo(), new GeneradorDiccionario(), jugadores);
+		this.tManager = new AdminTurnos(new GeneradorMazo(), jugadores);
 	}
 	
 	public Scrabble(Memento m) {
@@ -42,13 +45,13 @@ public class Scrabble {
 	}
 
 
-	public void addJugadorObserver(JugadorObserver ob) {
-		tManager.addJugadorObserver(ob);
+	public void addJugadorObserver(JugadorObserver ob, String j) {
+		tManager.addJugadorObserver(ob, j);
 	}
 
 
-	public void removeJugadorObserver(JugadorObserver ob) {
-		tManager.removeJugadorObserver(ob);
+	public void removeJugadorObserver(JugadorObserver ob, String j) {
+		tManager.removeJugadorObserver(ob, j);
 	}
 
 	

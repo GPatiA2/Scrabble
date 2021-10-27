@@ -1,13 +1,12 @@
 package modelo;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,7 +18,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-
+/**
+ * Clase GeneradorMazo
+ * 
+ * Esta clase genera el mazo de fichas
+ * a partir de un archivo json con la 
+ * informacion de las distintas fichas del
+ * juego
+ * 
+ * @author Grupo5
+ *
+ */
 public class GeneradorMazo{
 	
 	private List<Ficha> f;
@@ -38,14 +47,21 @@ public class GeneradorMazo{
 		this.in = new FileInputStream(new File("src" + File.separator +"ArchivoCarga" + File.separator +"mazo.json"));
 	}
 	
-	public void initList(InputStream in) throws IOException {
+	/**
+	 * Inicializa la lista de fichas. La cantidad de fichas de cada
+	 * letra depende de la frecuencia de la misma, a mayor frecuencia,
+	 * mayor numero de fichas de esa letra habra en el mazo.
+	 * 
+	 * @param in
+	 * @throws IOException
+	 */
+	private void initList(InputStream in) throws IOException {
 		/*
 		 * Este metodo lee del jsonObject el mazo
 		 */
 		
 		JSONObject jo = new JSONObject(new JSONTokener(in));
 		try {
-			JSONObject o;
 			int frecuenciaLetra, puntos;
 			char letra;
 			
@@ -73,12 +89,6 @@ public class GeneradorMazo{
 		 * Metodo que mezcla las fichas/letras 
 		 */
 		 Collections.shuffle(f, new Random(System.currentTimeMillis()));
-	}
-	
-	public void print() {
-		for(Ficha fi : f) {
-			System.out.print(fi);
-		}
 	}
 	
 	public Collection<Ficha> getRandomStack(){

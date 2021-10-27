@@ -1,0 +1,25 @@
+Refactor Observers
+
+1 Motivos:
+	El motivo principal de esta refactorización es eliminar las implementaciones vacías que 	tenían las clases que implementaban la interfaz de ModelObserver. 
+
+	Esto se producía porque, a grandes rasgos, podíamos dividir los observadores en dos tipos: 	los que observan al Game, y los que observan a AdminTurnos, no dando una 	implementación distinta de la vacía los observadores del Game a aquellos métodos 	referentes a cambios en el AdminTurnos y viceversa. 
+
+	Para eliminar esas implementaciones vacías y conseguir así un código más claro, limpio y 	entendible, se han realizado los cambios que se enuncian a continuación.
+2 Cambios:
+2.1 Interfaz ModelObserver:
+La interfaz ModelObserver ha sido dividida en dos interfaces más, la interfaz GameObserver y la interfaz TmanagerObserver, que encapsulan los métodos para responder ante cambios en el Game y en el AdminTurnos respectivamente.
+Estas dos interfaces extienden además a la interfaz ModelObserver, que ahora contiene un método ‘registerOn(Controller c)’ para registrarse como observador en cualquiera de las dos partes del modelo.
+De esta manera conseguimos eliminar la mayoría de implementaciones vacías que tenían los métodos del anterior ModelObserver desaparezcan, teniendo un código más limpio y entendible.
+Aún así, después de esta refactorización siguen quedando implementaciones vacías en los métodos de los GameObserver y los TmanagerObserver. Estas implementaciones se pueden eliminar aplicando una refactorización similar a la realizada en este sprint, pero a un nivel más específico, llegando a tener una interfaz por cada elemento del modelo observado. (Más allá de Game y AdminTurnos, llegando por ejemplo hasta Casilla o Turno) 
+2.2 Interfaz Observable:
+	La interfaz Observable se ha convertido en una interfaz genérica. Esta decisión ha sido 	tomada para conseguir que cualquier elemento observable del modelo solo pueda ser 	observado por un tipo de observador, o por subtipos de este. Por eso mismo, los métodos 	para añadir y eliminar observadores de la interfaz solo aceptan elementos de un tipo T o 	cualquier subtipo de T.
+	Como consecuencia, el AdminTurnos ahora implementa la interfaz 	‘Observable<TManagerObserver>’ y, por otro lado, el Game y el Tablero implementan 	ambos ‘Observable<GameObserver>’. 
+3 Instanciar un observador:
+		
+	Teniendo en cuenta estos cambios en las interfaces, el procedimiento general para instanciar 	un observador es el siguiente:
+    1. Crear la clase del observador e indicar qué interfaces implementa
+    2. En el constructor, recibir como parámetro en Controller, y llamar al método ‘registerOn(Controller c)’ de la interfaz ModelObserver.
+    3. En la implementación del método ‘registerOn(Controller c)’ , llamar al método del Controller correspondiente para registrar al observador en la lista del modelo.
+
+	

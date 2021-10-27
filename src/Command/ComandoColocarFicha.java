@@ -26,10 +26,6 @@ import utils.Coordenadas;
  */
 public class ComandoColocarFicha extends Command{
 	/**
-	 * Informacion de ayuda sobre el comando colocar una ficha
-	 */
-	private static final String help = "Este comando permite colocar una ficha en el tablero.";
-	/**
 	 * Identificador de la ficha a colocar
 	 */
 	private String id_ficha;
@@ -44,7 +40,7 @@ public class ComandoColocarFicha extends Command{
 	
 	
 	public ComandoColocarFicha(String id_ficha, int coorX, int coorY,char letra_comodin) {
-		super("colocar", ProtocoloComunicacion.COLOCAR_FICHA,"c", "colocar <ficha><coorX><corrY>", help);
+		super("colocar", ProtocoloComunicacion.COLOCAR_FICHA,"c");
 		this.id_ficha = id_ficha;
 		coor = new Coordenadas(coorX,coorY);
 		this.letra_comodin = letra_comodin;
